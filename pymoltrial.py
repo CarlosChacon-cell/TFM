@@ -18,6 +18,7 @@ parser.add_argument('--csv', '-csv', help='csv name, not .csv needed', required=
 #parser.add_argument('--pept_res', '-pr', help='peptide residues we are interested in', required=True, nargs='+')
 #parser.add_argument('--target_res', '-tr', help='target residues we are interested in', required=True, nargs= '+')
 parser.add_argument('--distance_threshold', '-d', help='Distance Threshold. Default is 4', required=False, default=4)
+parser.add_argument('--i', help='This is just teh iteration number because PMPNN_FR is very picky')
 args = parser.parse_args()
 
 # def generate_range(numbers):
@@ -31,6 +32,7 @@ pymol.finish_launching()
 # Load your structure
 cmd.load(args.protein)
 
+protein_name=args.protein.split('.')[0]
 # List to store distances
 
 dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'DA_AD': []}
@@ -78,7 +80,11 @@ for i in peptide_residues:
                 # else:
                 #     continue
 print('Finished')
-interacting_residues.to_csv(f'./distances_outputs/{args.csv}.csv', sep='\t')
+interacting_residues.to_csv(f'./{args.csv}.csv', sep='\t')
+
+cmd.select(f'sele, {protein_name}')
+
+cmd.save(f'output_{args.i}.pdb', 'sele')
 
 
 pymol.cmd.quit()

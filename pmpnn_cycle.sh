@@ -30,7 +30,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 i=0
-best_i=1
+best_i=0
 
 #input1 is the input without the pdb termination so it can be handle easily
 
@@ -63,7 +63,7 @@ while [[ $i -le $max ]];do
     output_af2="${actual_folder}/TFEB_run_${i}_pmpnn_out_af2"
 
     #fixing residues
-    job1=$(python3 /data/carlos/scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv ./distance_outputs/interacting_${best_i})
+    job1=$(python3 /data/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv ./interacting_${best_i})
     echo " Residues fixed at positions ${indices}"
     
     #pdbs to silent 
@@ -74,17 +74,16 @@ while [[ $i -le $max ]];do
 
     #pmpnn_fr
     echo "starting pmpnn"
+    #job3=$(sbatch  submit_pMPNN.sh --input_silent "$input_pmpnn")
     job3=$(python3 -u /apps/rosetta/dl_binder_design/mpnn_fr/dl_interface_design.py -silent "$input_pmpnn" -checkpoint_path "/apps/rosetta/dl_binder_design/mpnn_fr/ProteinMPNN/vanilla_model_weights/v_48_030.pt" -outsilent "$output_pmpnn")
+
+    # Check if the file exists
+    while [[ ! -e "$output_pmpnn" ]]; do
+        echo "Waiting for the file to be created: $AF2sc"
+        sleep 60  # Adjust the sleep duration as needed
+    done
+
     echo "PMPNN-FR finished, outfile is $actual_folder/TFEB_run_${i}_pmpnn_out.silent"
-
-    #pmpnn_fr becomes silly if the pdb from which you want to create a new sequence has already been inside pmpnn.
-    #The next line is thought to stop the cycle if the new file is not created
-
-    if [ ! -e "$output_pmpnn" ]; then
-        echo "Error: The required file '$actual_folder/TFEB_run_${i}_pmpnn_out.silent' does not exist. Exiting."
-        exit 1  # Exit with a non-zero status to indicate an error
-    fi
-
     #submit af2
 
     job4=$(sbatch submit_af2_interfaces.sh --input_silent "$input_af2")
@@ -108,18 +107,26 @@ while [[ $i -le $max ]];do
     job5=$(/apps/rosetta/dl_binder_design/include/silent_tools/silentextract "${output_af2}.silent")
     echo "Silent extracted as ${input1}_dldesign_0_cycle1_af2pred.pdb"
 
-    #now we check the polar interactions to fix it 
-    job6=$(pymol /data/carlos/scripts/pymoltrial.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "./distance_outputs/interacting_${i}")
-    jid6dep=`echo $job6 | awk '{print $4}'`
-    echo "Distances computed"
-
-    mv "${input1}_dldesign_0_cycle1_af2pred.pdb" "output_${i}.pdb"
-    if [ "$i" -gt 0 ];then
-        if $(python3 /data/carlos/scripts/score_checker.py --sc "TFEB_run_${i}_pmpnn_out_af2.sc" --previous "TFEB_run_${best_i}_pmpnn_out_af2.sc"); then
-             best_i=$i
-             input1="output_${i}"
-             echo "new best score is cycle ${i}"
+    if [ "$i" -ne 0 ];then
+        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "TFEB_run_${i}_pmpnn_out_af2.sc" --previous "TFEB_run_$((best_i-1))_pmpnn_out_af2.sc"); then
+        
+            best_i=$i
+            job6=$(pymol /data/carlos/scripts/Carlos_scripts/pymoltrial.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "/interacting_${i}" --i "$i")
+            echo "Distances computed" 
+            input1="output_${i}"
+            echo "new best score is cycle ${best_i}"
+        else
+            job7=$(pymol /data/carlos/scripts/Carlos_scripts/structure_save.py --protein "${input1}.pdb" --i "$i")
+            input1="output_${i}"
+            echo "best score is cycle ${best_i}"
         fi
+        
+    else
+
+        job8=$(pymol /data/carlos/scripts/Carlos_scripts/structure_save.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --i "$i")
+        input1="output_${i}"
+        echo "best score is cycle ${best_i}"
+
     fi 
 
     i=$((i+1))
