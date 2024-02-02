@@ -15,19 +15,6 @@ parser.add_argument("--csv")
 parser.add_argument("--verbose", action="store_true", default=False)
 args = parser.parse_args()
 
-# if args.pdbdir:
-#     pdb_list = os.listdir(args.pdbdir)
-
-#     # Add the possibility tonchoose between directory or file 
-#     for pdb in pdb_list:
-        
-#         if not pdb.endswith(".pdb"):
-#             if args.verbose:
-#                 print(f"Skipping {pdb} as it is not a PDB file")
-#             continue
-
-#         pdb_path = os.path.join(args.pdbdir, pdb)
-
 #A function to generate a range of position from 2 numbers 
 def generate_range(numbers):
     start, end = map(int, numbers)
@@ -50,7 +37,7 @@ for number in positions:
 
 #read the interacting.csv and add new residues to the indices
 try: 
-    interacting_df=pd.read_csv(f'./distances_outputs/{args.csv}.csv', sep='\t')
+    interacting_df=pd.read_csv(f'./{args.csv}.csv', sep='\t')
     for i in interacting_df['pept_res']:
         if i not in indices:
             indices.append(int(i))
@@ -59,7 +46,7 @@ try:
 except FileNotFoundError:
     dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'DA_AD': []}
     interacting_residues=pd.DataFrame(dict)
-    interacting_residues.to_csv(f'./distances_outputs/interacting_1.csv', sep='\t')
+    interacting_residues.to_csv(f'./interacting_0.csv', sep='\t')
 
 
 

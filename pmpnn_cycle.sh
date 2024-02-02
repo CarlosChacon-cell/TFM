@@ -79,7 +79,7 @@ while [[ $i -le $max ]];do
 
     # Check if the file exists
     while [[ ! -e "$output_pmpnn" ]]; do
-        echo "Waiting for the file to be created: $AF2sc"
+        echo "Waiting for the file to be created: $output_pmpnn"
         sleep 60  # Adjust the sleep duration as needed
     done
 
@@ -108,8 +108,8 @@ while [[ $i -le $max ]];do
     echo "Silent extracted as ${input1}_dldesign_0_af2pred.pdb"
 
     if [ "$i" -ne 0 ];then
-        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "run_${i}/TFEB_run_${i}_out_af2.sc" --previous "run_${best_i}/TFEB_run_${best_i}_out_af2.sc"); then
-        
+        result=$(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "run_${i}/TFEB_run_${i}_out_af2.sc" --previous "run_${best_i}/TFEB_run_${best_i}_out_af2.sc")
+        if [ "$result" -eq 1 ] ; then
             best_i=$i
             job6=$(pymol /data/carlos/scripts/Carlos_scripts/pymoltrial.py --protein "${input1}_dldesign_0_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "/interacting_${i}" --i "$i")
             echo "Distances computed" 
