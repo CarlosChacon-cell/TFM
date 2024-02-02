@@ -108,7 +108,7 @@ while [[ $i -le $max ]];do
     echo "Silent extracted as ${input1}_dldesign_0_cycle1_af2pred.pdb"
 
     if [ "$i" -ne 0 ];then
-        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "TFEB_run_${i}_pmpnn_out_af2.sc" --previous "TFEB_run_$((best_i-1))_pmpnn_out_af2.sc"); then
+        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "TFEB_run_${i}_pmpnn_out_af2.sc" --previous "TFEB_run_${best_i}_pmpnn_out_af2.sc"); then
         
             best_i=$i
             job6=$(pymol /data/carlos/scripts/Carlos_scripts/pymoltrial.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "/interacting_${i}" --i "$i")
