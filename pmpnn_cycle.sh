@@ -56,11 +56,11 @@ while [[ $i -le $max ]];do
 
     input_pmpnn="$actual_folder/TFEB_run_${i}.silent"
     
-    output_pmpnn="$actual_folder/TFEB_run_${i}_pmpnn_out.silent"
+    output_pmpnn="$actual_folder/TFEB_run_${i}_out.silent"
 
-    input_af2="$actual_folder/TFEB_run_${i}_pmpnn.silent"
+    input_af2="$actual_folder/TFEB_run_${i}.silent"
         
-    output_af2="${actual_folder}/TFEB_run_${i}_pmpnn_out_af2"
+    output_af2="${actual_folder}/TFEB_run_${i}_out_af2"
 
     #fixing residues
     job1=$(python3 /data/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv ./interacting_${best_i})
@@ -75,7 +75,7 @@ while [[ $i -le $max ]];do
     #pmpnn_fr
     echo "starting pmpnn"
     #job3=$(sbatch  submit_pMPNN.sh --input_silent "$input_pmpnn")
-    job3=$(python3 -u /apps/rosetta/dl_binder_design/mpnn_fr/dl_interface_design.py -silent "$input_pmpnn" -checkpoint_path "/apps/rosetta/dl_binder_design/mpnn_fr/ProteinMPNN/vanilla_model_weights/v_48_030.pt" -outsilent "$output_pmpnn")
+    job3=$(sbatch submit_pMPNN.sh --input_silent "$input_pmpnn" --n_seqs 1 --relax_cycles 0)
 
     # Check if the file exists
     while [[ ! -e "$output_pmpnn" ]]; do
@@ -105,13 +105,13 @@ while [[ $i -le $max ]];do
     #extract the pdb 
 
     job5=$(/apps/rosetta/dl_binder_design/include/silent_tools/silentextract "${output_af2}.silent")
-    echo "Silent extracted as ${input1}_dldesign_0_cycle1_af2pred.pdb"
+    echo "Silent extracted as ${input1}_dldesign_0_af2pred.pdb"
 
     if [ "$i" -ne 0 ];then
-        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "TFEB_run_${i}_pmpnn_out_af2.sc" --previous "TFEB_run_${best_i}_pmpnn_out_af2.sc"); then
+        if $(python3 /data/carlos/scripts/Carlos_scripts/score_checker.py --sc "run_${i}/TFEB_run_${i}_out_af2.sc" --previous "run_${best_i}/TFEB_run_${best_i}_out_af2.sc"); then
         
             best_i=$i
-            job6=$(pymol /data/carlos/scripts/Carlos_scripts/pymoltrial.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "/interacting_${i}" --i "$i")
+            job6=$(pymol /data/carlos/scripts/Carlos_scripts/pymoltrial.py --protein "${input1}_dldesign_0_af2pred.pdb" --peptide "$peptide" --chains "$chains" --csv "/interacting_${i}" --i "$i")
             echo "Distances computed" 
             input1="output_${i}"
             echo "new best score is cycle ${best_i}"
@@ -123,7 +123,7 @@ while [[ $i -le $max ]];do
         
     else
 
-        job8=$(pymol /data/carlos/scripts/Carlos_scripts/structure_save.py --protein "${input1}_dldesign_0_cycle1_af2pred.pdb" --i "$i")
+        job8=$(pymol /data/carlos/scripts/Carlos_scripts/structure_save.py --protein "${input1}.pdb" --i "$i")
         input1="output_${i}"
         echo "best score is cycle ${best_i}"
 
