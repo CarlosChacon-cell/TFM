@@ -61,7 +61,7 @@ lig_aro_residues={args.peptide:storedligrings}
 print(lig_aro_residues)
 #Just the same with the protein chains 
 cmd.delete('sele')
-cmd.select(f'sele, chain {args.chains} and (resn PHE or resn TYR or resn TRP) w. 20 of chain {args.peptide} and (resn PHE or resn TYR or resn TRP)')
+cmd.select(f'sele, chain {args.chains} and (resn PHE or resn TYR or resn TRP) w. 15 of chain {args.peptide} and (resn PHE or resn TYR or resn TRP)')
 cmd.select('sele, br. sele')
 protein_rings = "sele"
 storedprotrings=set()
@@ -74,16 +74,43 @@ print(prot_aro_residues)
 
 dih_parallel=25
 dih_tshape=80
+#Selecting just the Trps of ligand
+
+cmd.delete('sele')
+cmd.select(f'sele, chain {args.peptide} and resn TRP ')
+cmd.select('sele, br. sele')
+lig_trp = "sele"
+storedligtrp=set()
+cmd.iterate(selector.process(lig_trp), 'storedligtrp.add(resv)')
+
+lig_trp_residues={args.peptide:storedligtrp}
+
+#selecting the Trps of the protein
+
+cmd.delete('sele')
+cmd.select(f'sele, chain {args.chains} and resn TRP ')
+cmd.select('sele, br. sele')
+prot_trp = "sele"
+storedprottrp=set()
+cmd.iterate(selector.process(prot_trp), 'storedprottrp.add(resv)')
+
+prot_trp_residues={args.chains:storedprottrp}
 
 #A loop to generate the pseudoatoms at the centroids of the residues 
 
 for i in lig_aro_residues:
     for j in lig_aro_residues[i]:
-        lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name cg+cz')
+        if j not in lig_trp_residues[args.peptide]:
+            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name cg+cz')
+        else:
+             lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name ce3+cz2')
+
 for k in prot_aro_residues: 
             for l in prot_aro_residues[k]:
-                prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name cg+cz')
-
+                if l not in prot_trp_residues[args.chains]:
+                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name cg+cz')
+                else:
+                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name ce3+cz2')
 
 # Another loop to store this residues 
 for i in lig_aro_residues:
@@ -96,7 +123,7 @@ for i in lig_aro_residues:
                 print(f'{xyz_lig} \n')
                 xyz_prot=cmd.get_coords(f'prot_center_{l}////ps1')
                 angle=vecAngle(xyz_lig, xyz_prot)
-                if (distance_pp <15 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
+                if (distance_pp <10 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
                     interacting_residues.loc[len(interacting_residues)]=[j,l,distance_pp, 'PP']
                     print ('residue added')
 
