@@ -8,6 +8,7 @@
 import pymol
 import argparse
 import pandas as pd
+import numpy as np
 
 
 parser = argparse.ArgumentParser()
@@ -25,6 +26,23 @@ args = parser.parse_args()
 #     start, end = map(int, numbers)
 #     return list(range(start, end + 1))
 
+#compute the angle between the rings using the dot product
+def vecAngle(vec1, vec2):
+    '''
+
+    return the angle between them in degree.
+    '''
+    dotprod = vec1[0][0]*vec2[0][0]+vec1[0][1]*vec2[0][1]+vec1[0][2]*vec2[0][2]
+    print(dotprod)
+    magnitude1=np.sqrt(vec1[0][0]**2+vec1[0][1]**2+vec1[0][2]**2)
+    print(magnitude1)
+    magnitude2=np.sqrt(vec2[0][0]**2+vec2[0][1]**2+vec2[0][2]**2)
+    deg = np.arccos(round(dotprod/(magnitude1*magnitude2), 4)) * 180 / np.pi
+    print(deg)
+    if deg > 90:
+        deg = 180 - deg
+    return deg
+
 
 # Initialize PyMOL
 pymol.finish_launching()
@@ -35,19 +53,20 @@ cmd.load(args.protein)
 protein_name=args.protein.split('.')[0]
 # List to store distances
 
-dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'DA_AD': []}
+dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP': []}
 interacting_residues=pd.DataFrame(dict)
 # Residue indices
-cmd.select(f'sele, chain {args.peptide}')
-cmd.select('sele, br. sele')
 
-peptide= "sele"
+cmd.select(f'sele, chain {args.peptide} w. 4 of chain {args.chains}')
+cmd.select('sele, br. sele')
+peptide='sele'
+
 peptideres= set()
 cmd.iterate(selector.process(peptide), 'peptideres.add(resv)')
 peptide_residues = {args.peptide:peptideres}
-
+print(peptide_residues)
 #Trying to get the residue position from a selection
-
+cmd.delete('sele')
 cmd.select(f'sele, chain {args.chains} w. 4 of chain {args.peptide}')
 cmd.select('sele, br. sele')
 
@@ -58,9 +77,9 @@ cmd.iterate(selector.process(interface), 'storedresidues.add(resv)')
 #target indices 
 
 target_residues = {args.chains:storedresidues}
+print(target_residues)
 
-
-# Calculate distance and store in the list.
+#Calculate distance and store in the list.
 
 
 for i in peptide_residues:
@@ -69,16 +88,12 @@ for i in peptide_residues:
             for l in target_residues[k]:
                 distance_polar = cmd.distance(f"chain {i} and resi {j} ", f"chain {k} and resi {l} ", mode=2)
                 if distance_polar <4 and distance_polar != 0:
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_polar, 'AD']
+                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_polar, 'Polar']
                     print ('residue added')
                 else:
                     continue
-                # distance_PP = cmd.distance(f"chain {i} and resi {j} ", f"chain {k} and resi {l} ", mode=5)
-                # if distance_PP <4 and distance_PP != 0:
-                #     interacting_residues.loc[len(interacting_residues)]=[j,l,distance_PP, 'AD']
-                #     print ('residue added')
-                # else:
-                #     continue
+
+
 print('Finished')
 interacting_residues.to_csv(f'./{args.csv}.csv', sep='\t')
 
@@ -88,3 +103,9 @@ cmd.save(f'output_{args.i}.pdb', 'sele')
 
 
 pymol.cmd.quit()
+
+
+'''
+It seems that the pseudoatom function through teh API doesn't work
+
+'''
