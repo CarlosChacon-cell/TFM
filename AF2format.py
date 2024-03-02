@@ -1,6 +1,10 @@
 
 #!/usr/bin/env python3
 
+'''This code is just a small modification of CNIO code 
+so the names of the FASTA output are legible and more easy to handle'''
+
+
 import pandas as pd
 import os
 import argparse
