@@ -1,10 +1,5 @@
 
-
-#pymol distance getter. iterative process that checks if the distance between
-#any aminoacid of the pirulo and any aminoacid of the interior of both proteins
-
-
-# Import the PyMOL module
+# This is the new section to compute posible pi-cation interactions. 
 import pymol
 import argparse
 import pandas as pd
@@ -19,7 +14,7 @@ parser.add_argument('--csv', '-csv', help='csv name, not .csv needed', required=
 #parser.add_argument('--pept_res', '-pr', help='peptide residues we are interested in', required=True, nargs='+')
 #parser.add_argument('--target_res', '-tr', help='target residues we are interested in', required=True, nargs= '+')
 parser.add_argument('--distance_threshold', '-d', help='Distance Threshold. Default is 4', required=False, default=4)
-parser.add_argument('--i', help='This is just teh iteration number because PMPNN_FR is very picky')
+# parser.add_argument('--i', help='This is just teh iteration number because PMPNN_FR is very picky')
 args = parser.parse_args()
 
 # def generate_range(numbers):
@@ -33,12 +28,10 @@ def vecAngle(vec1, vec2):
     return the angle between them in degree.
     '''
     dotprod = vec1[0][0]*vec2[0][0]+vec1[0][1]*vec2[0][1]+vec1[0][2]*vec2[0][2]
-    print(dotprod)
     magnitude1=np.sqrt(vec1[0][0]**2+vec1[0][1]**2+vec1[0][2]**2)
-    print(magnitude1)
     magnitude2=np.sqrt(vec2[0][0]**2+vec2[0][1]**2+vec2[0][2]**2)
     deg = np.arccos(round(dotprod/(magnitude1*magnitude2), 4)) * 180 / np.pi
-    print(deg)
+    print(f'Angle between centroids is {deg}')
     if deg > 90:
         deg = 180 - deg
     return deg
@@ -53,127 +46,9 @@ cmd.load(args.protein)
 protein_name=args.protein.split('.')[0]
 # List to store distances
 
-dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP_CP': []}
+dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP': []}
 interacting_residues=pd.DataFrame(dict)
-# Residue indices
-
-cmd.select(f'sele, chain {args.peptide} w. 4 of chain {args.chains}')
-cmd.select('sele, br. sele')
-peptide='sele'
-
-peptideres= set()
-cmd.iterate(selector.process(peptide), 'peptideres.add(resv)')
-peptide_residues = {args.peptide:peptideres}
-print(peptide_residues)
-#Trying to get the residue position from a selection
-cmd.delete('sele')
-cmd.select(f'sele, chain {args.chains} w. 4 of chain {args.peptide}')
-cmd.select('sele, br. sele')
-
-interface = "sele"
-storedresidues=set()
-cmd.iterate(selector.process(interface), 'storedresidues.add(resv)')
-
-#target indices 
-
-target_residues = {args.chains:storedresidues}
-print(target_residues)
-
-#Calculate distance and store in the list.
-
-
-for i in peptide_residues:
-    for j in peptide_residues[i]:
-        for k in target_residues: 
-            for l in target_residues[k]:
-                distance_polar = cmd.distance(f"chain {i} and resi {j} ", f"chain {k} and resi {l} ", mode=2)
-                if distance_polar <4 and distance_polar != 0:
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_polar, 'Polar']
-                    print ('residue added')
-                else:
-                    continue
-
-
                 
-# This first block search for ligand residues that can be involved in the interaction, restricting the search to only aromatic residues
-cmd.delete('sele')
-cmd.select(f'sele, chain {args.peptide} and (resn PHE or resn TYR or resn TRP or resn HIS) w. 10 of chain {args.chains} and (resn PHE or resn TYR or resn TRP or resn HIS)')
-cmd.select('sele, br. sele')
-ligand_rings = "sele"
-storedligrings=set()
-cmd.iterate(selector.process(ligand_rings), 'storedligrings.add(resv)') #This is how pymol works, no clue about why
-
-lig_aro_residues={args.peptide:storedligrings}
-print(lig_aro_residues)
-#Just the same with the protein chains 
-cmd.delete('sele')
-cmd.select(f'sele, chain {args.chains} and (resn PHE or resn TYR or resn TRP) w. 10 of chain {args.peptide} and (resn PHE or resn TYR or resn TRP)')
-cmd.select('sele, br. sele')
-protein_rings = "sele"
-storedprotrings=set()
-cmd.iterate(selector.process(protein_rings), 'storedprotrings.add(resv)')
-
-prot_aro_residues={args.chains:storedprotrings}
-print(prot_aro_residues)
-
-#we define the thresholds
-
-dih_parallel=25
-dih_tshape=80
-#Selecting just the Trps of ligand
-
-cmd.delete('sele')
-cmd.select(f'sele, chain {args.peptide} and resn TRP ')
-cmd.select('sele, br. sele')
-lig_trp = "sele"
-storedligtrp=set()
-cmd.iterate(selector.process(lig_trp), 'storedligtrp.add(resv)')
-
-lig_trp_residues={args.peptide:storedligtrp}
-
-#selecting the Trps of the protein
-
-cmd.delete('sele')
-cmd.select(f'sele, chain {args.chains} and resn TRP ')
-cmd.select('sele, br. sele')
-prot_trp = "sele"
-storedprottrp=set()
-cmd.iterate(selector.process(prot_trp), 'storedprottrp.add(resv)')
-
-prot_trp_residues={args.chains:storedprottrp}
-
-#A loop to generate the pseudoatoms at the centroids of the residues 
-
-for i in lig_aro_residues:
-    for j in lig_aro_residues[i]:
-        if j not in lig_trp_residues[args.peptide]:
-            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name cg+cz')
-        else:
-             lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name ce3+cz2')
-
-for k in prot_aro_residues: 
-            for l in prot_aro_residues[k]:
-                if l not in prot_trp_residues[args.chains]:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name cg+cz')
-                else:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name ce3+cz2')
-
-# Another loop to store this residues 
-for i in lig_aro_residues:
-    for j in lig_aro_residues[i]:
-        for k in prot_aro_residues: 
-            for l in prot_aro_residues[k]:
-                distance_pp = cmd.distance(f'lig_center_{j}////ps1', f'prot_center_{l}////ps1')
-                print(f'distance is {distance_pp} \n')
-                xyz_lig=cmd.get_coords(f'lig_center_{j}////ps1')
-                print(f'{xyz_lig} \n')
-                xyz_prot=cmd.get_coords(f'prot_center_{l}////ps1')
-                angle=vecAngle(xyz_lig, xyz_prot)
-                if (distance_pp <10 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_pp, 'PP']
-                    print ('residue added')
-
-               
 # This first block search for ligand residues that can be involved in the interaction, restricting the search to only aromatic residues
 cmd.delete('sele')
 cmd.select(f'sele, chain {args.peptide} and (resn PHE or resn TYR or resn TRP) w. 10 of chain {args.chains} and (resn ARG or resn LYS)  and name N* ')
@@ -276,20 +151,11 @@ for i in lig_aro_residues:
 for k in prot_aro_residues: 
     for l in prot_aro_residues[k]:
                 for j in lig_cat_residues[args.peptide]:
-                    distance_cp = (cmd.distance(f' chain {args.peptide} and resi {j} and name NH*', f'prot_center_{l}////ps1'))
+                    distance_cp = min(cmd.distance(f' chain {args.peptide} and resi {j} and name NH*', f'prot_center_{l}////ps1'))
                     print(f'distance is {distance_cp} \n')
                     if (distance_cp < 8 and distance_cp != 0.0):
                         interacting_residues.loc[len(interacting_residues)]=[j,l,distance_cp, 'CP']
                         print ('residue added')
 
 
-print('Finished')
 interacting_residues.to_csv(f'./{args.csv}.csv', sep='\t')
-
-cmd.select(f'sele, {protein_name}')
-
-cmd.save(f'output_{args.i}.pdb', 'sele')
-
-
-pymol.cmd.quit()
-

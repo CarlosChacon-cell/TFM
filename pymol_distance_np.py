@@ -1,5 +1,7 @@
 
-
+#V1.1
+#REMOVING THE STRUCUTURE SAVE SO I CAN ALIGN IT WITH THE ORIGINAL
+#20240220
 #pymol distance getter. iterative process that checks if the distance between
 #any aminoacid of the pirulo and any aminoacid of the interior of both proteins
 
@@ -7,7 +9,6 @@
 # Import the PyMOL module
 import pymol
 import argparse
-import pandas as pd
 import numpy as np
 
 
@@ -15,11 +16,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--protein', '-pt', help='protein file path', required=True)
 parser.add_argument('--peptide', '-pp', help='chain of the region we are changing', required=True)
 parser.add_argument('--chains', '-ch' , help= 'chains that interact with the peptide', required=True)
-parser.add_argument('--csv', '-csv', help='csv name, not .csv needed', required=True )
+parser.add_argument('--csv', '-csv', help='csv name, not .csv needed')
 #parser.add_argument('--pept_res', '-pr', help='peptide residues we are interested in', required=True, nargs='+')
 #parser.add_argument('--target_res', '-tr', help='target residues we are interested in', required=True, nargs= '+')
 parser.add_argument('--distance_threshold', '-d', help='Distance Threshold. Default is 4', required=False, default=4)
-parser.add_argument('--i', help='This is just teh iteration number because PMPNN_FR is very picky')
 args = parser.parse_args()
 
 # def generate_range(numbers):
@@ -54,7 +54,6 @@ protein_name=args.protein.split('.')[0]
 # List to store distances
 
 dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP_CP': []}
-interacting_residues=pd.DataFrame(dict)
 # Residue indices
 
 cmd.select(f'sele, chain {args.peptide} w. 4 of chain {args.chains}')
@@ -88,7 +87,10 @@ for i in peptide_residues:
             for l in target_residues[k]:
                 distance_polar = cmd.distance(f"chain {i} and resi {j} ", f"chain {k} and resi {l} ", mode=2)
                 if distance_polar <4 and distance_polar != 0:
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_polar, 'Polar']
+                    dict['pept_res'].append(j)
+                    dict["tar_res"].append(l)
+                    dict['distance'].append(distance_polar)
+                    dict['Polar_PP_CP'].append("Polar")
                     print ('residue added')
                 else:
                     continue
@@ -169,9 +171,11 @@ for i in lig_aro_residues:
                 print(f'{xyz_lig} \n')
                 xyz_prot=cmd.get_coords(f'prot_center_{l}////ps1')
                 angle=vecAngle(xyz_lig, xyz_prot)
-                if (distance_pp <10 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_pp, 'PP']
-                    print ('residue added')
+                if (distance_pp <7.5 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
+                    dict['pept_res'].append(j)
+                    dict["tar_res"].append(l)
+                    dict['distance'].append(distance_pp)
+                    dict['Polar_PP_CP'].append("PP")
 
                
 # This first block search for ligand residues that can be involved in the interaction, restricting the search to only aromatic residues
@@ -270,26 +274,34 @@ for i in lig_aro_residues:
                 distance_cp = cmd.distance(f'lig_center_{j}////ps1', f'chain {args.chains} and resi {k} and name NH*')
                 print(f'distance is {distance_cp} \n')
                #Angle im not sure how to compute it or which angles to use 
-                if (distance_cp < 8 and distance_cp != 0.0) :
-                    interacting_residues.loc[len(interacting_residues)]=[j,l,distance_cp, 'CP']
+                if (distance_cp < 7.5 and distance_cp != 0.0) :
+                    dict['pept_res'].append(j)
+                    dict["tar_res"].append(l)
+                    dict['distance'].append(distance_cp)
+                    dict['Polar_PP_CP'].append("CP")
                     print ('residue added')
 for k in prot_aro_residues: 
     for l in prot_aro_residues[k]:
                 for j in lig_cat_residues[args.peptide]:
                     distance_cp = (cmd.distance(f' chain {args.peptide} and resi {j} and name NH*', f'prot_center_{l}////ps1'))
                     print(f'distance is {distance_cp} \n')
-                    if (distance_cp < 8 and distance_cp != 0.0):
-                        interacting_residues.loc[len(interacting_residues)]=[j,l,distance_cp, 'CP']
+                    if (distance_cp < 7.5 and distance_cp != 0.0):
+                        dict['pept_res'].append(j)
+                        dict["tar_res"].append(l)
+                        dict['distance'].append(distance_cp)
+                        dict['Polar_PP_CP'].append("CP")
                         print ('residue added')
 
 
 print('Finished')
-interacting_residues.to_csv(f'./{args.csv}.csv', sep='\t')
 
-cmd.select(f'sele, {protein_name}')
+output_file = f'{args.csv}.csv'
 
-cmd.save(f'output_{args.i}.pdb', 'sele')
-
+# Write the data to a text file
+with open(output_file, 'w') as file:
+    file.write('pept_res'+ '\t' + 'tar_res'+'\t'+'distance'+'\t'+'Polar_PP_CP'+'\n')
+    for i in range(len(dict['distance'])):
+        file.write(f"{dict['pept_res'][i]}\t{dict['tar_res'][i]}\t{dict['distance'][i]}\t{dict['Polar_PP_CP'][i]}\n")
 
 pymol.cmd.quit()
 
