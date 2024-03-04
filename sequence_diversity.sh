@@ -1,19 +1,33 @@
 
+:'This is code thought to be used as a sequence diversity generator from a given PDB.
+It pretty much does the same as teh following paper: Improving Protein Expression, Stability, and Function with ProteinMPNN (acs.org)
+
+the main objective is, given a PDB file in which the binder to modify is the chain X (It is recommended to call
+it A since AF2 rename it after to A) and binds to a target Y (Again, it si recommended to be called B), you can 
+run PMPNN over that structure keeping the key residues fixed. In case you dont know which are the key residue, 
+the program also detects the "closest interacting" residues and keep only those fixed'
+
+:'This code is meant to be used in a folder with several PDBs to be modified, or only one, that should be inside a folder called input'
+:'Right now cannot be used with AF2 output files, but we hope that in a future it is used that way'
 
 while [[ $# -gt 0 ]]; do
     key="$1"
 
     case $key in
         --max)
-            max="$2"
+            max="$2" #Number of runs per each structure that are going to be made
             shift 
             ;;
         --peptide)
-            peptide="$2"
+            peptide="$2" #Peptide chain
             shift  
             ;;
         --chains)
-            chains="$2"
+            chains="$2" #Target chain
+            shift
+            ;;
+        --indices)
+            indices="$2" #Indices to fix
             shift
             ;;
         *)
@@ -22,7 +36,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 counter=0
-for file in *.pdb; do
+for file in input/*.pdb; do #CHECK IF THIS LITTLE MOD WORKS FINE
 #Setting variables to 0
     i=0
     best_i=0
@@ -56,9 +70,13 @@ for file in *.pdb; do
         joby=$(pymol -c /data/cchacon/carlos/scripts/Carlos_scripts/structure_save.py --protein "$file" --i "$counter" --folder "$actual_folder")
 
         #we fix residues 
-        job1=$(python3 /data/cchacon/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --csv interacting_${counter})
-        echo " Residues fixed at positions ${indices}"
-
+        if [ -n "$indices"];then #If we specify some indexes (it still fix the csv)
+            job1_1=$(python3 /data/cchacon/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv interacting_${counter})
+            echo " Residues fixed at positions ${indices}"
+        else
+            job1_2=$(python3 /data/cchacon/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --csv interacting_${counter})
+            echo "residues fixed"
+        fi
         #pdbs to silent 
 
         job2=$(/apps/rosetta/dl_binder_design/include/silent_tools/silentfrompdbs "$input_fixed" > "$output_silent")
@@ -70,7 +88,7 @@ for file in *.pdb; do
         jid3dep=`echo $job3 | awk '{print $4}'`
         echo "Submitted pMPNN with jobid: $jid3dep"
 
-
+        #Maybe using Nayim and Rafa's dependencies is better
         # Check if the file exists
         while [[ ! -e "$output_pmpnn" ]]; do
             echo "Waiting for the file to be created: $output_pmpnn"
