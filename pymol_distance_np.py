@@ -10,6 +10,7 @@
 import pymol
 import argparse
 import numpy as np
+import os
 
 
 parser = argparse.ArgumentParser()
@@ -43,6 +44,11 @@ def vecAngle(vec1, vec2):
         deg = 180 - deg
     return deg
 
+#global variable
+protein_name=args.protein.split('.')[0]
+print(protein_name)
+
+
 
 # Initialize PyMOL
 pymol.finish_launching()
@@ -53,7 +59,7 @@ cmd.load(args.protein)
 protein_name=args.protein.split('.')[0]
 # List to store distances
 
-dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP_CP': []}
+dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP_CP': [], 'score':[]}
 # Residue indices
 
 cmd.select(f'sele, chain {args.peptide} w. 4 of chain {args.chains}')
@@ -91,6 +97,7 @@ for i in peptide_residues:
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_polar)
                     dict['Polar_PP_CP'].append("Polar")
+                    dict['score'].append(1/distance_polar**2)
                     print ('residue added')
                 else:
                     continue
@@ -176,6 +183,7 @@ for i in lig_aro_residues:
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_pp)
                     dict['Polar_PP_CP'].append("PP")
+                    dict['score'].append(1/distance_pp**2)
 
                
 # This first block search for ligand residues that can be involved in the interaction, restricting the search to only aromatic residues
@@ -279,6 +287,8 @@ for i in lig_aro_residues:
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_cp)
                     dict['Polar_PP_CP'].append("CP")
+                    dict['score'].append(1/distance_cp**2)
+
                     print ('residue added')
 for k in prot_aro_residues: 
     for l in prot_aro_residues[k]:
@@ -290,18 +300,37 @@ for k in prot_aro_residues:
                         dict["tar_res"].append(l)
                         dict['distance'].append(distance_cp)
                         dict['Polar_PP_CP'].append("CP")
+                        dict['score'].append(1/distance_cp**2)
                         print ('residue added')
 
 
 print('Finished')
 
 output_file = f'{args.csv}.csv'
-
+total_score=0
+for i in dict['score']:
+     total_score += i
 # Write the data to a text file
 with open(output_file, 'w') as file:
-    file.write('pept_res'+ '\t' + 'tar_res'+'\t'+'distance'+'\t'+'Polar_PP_CP'+'\n')
+    file.write('pept_res'+ '\t' + 'tar_res'+'\t'+'distance'+'\t'+'Polar_PP_CP'+'\t'+'SCORE'+'\n')
     for i in range(len(dict['distance'])):
-        file.write(f"{dict['pept_res'][i]}\t{dict['tar_res'][i]}\t{dict['distance'][i]}\t{dict['Polar_PP_CP'][i]}\n")
+        file.write(f"{dict['pept_res'][i]}\t{dict['tar_res'][i]}\t{dict['distance'][i]}\t{dict['Polar_PP_CP'][i]}\t{dict['score'][i]}\n")
+    file.write(f'FINAL SCORE\t\t\t\t\t{total_score}')
 
+#We append the scores
+score_file='scores.csv'
+# Check if the file exists
+if not os.path.exists(score_file):
+    # File doesn't exist, create it and write the header
+    with open(score_file, 'w') as file:
+        file.write('description'+ '\t' + 'INTERACTING FILE'+ '\t' + 'SCORE'+ '\n')
+
+with open(score_file, 'a') as file:
+     file.write(f"{protein_name}\t{args.csv}\t{total_score}\n")
+
+
+#close pymol
 pymol.cmd.quit()
+
+
 

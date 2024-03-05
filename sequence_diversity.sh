@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 counter=0
-for file in input/*.pdb; do #CHECK IF THIS LITTLE MOD WORKS FINE
+for file in input/*.pdb; do 
 #Setting variables to 0
     i=0
     best_i=0
