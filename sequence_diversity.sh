@@ -1,15 +1,16 @@
 
-:'This is code thought to be used as a sequence diversity generator from a given PDB.
-It pretty much does the same as teh following paper: Improving Protein Expression, Stability, and Function with ProteinMPNN (acs.org)
+#This is code thought to be used as a sequence diversity generator from a given PDB.
+#It pretty much does the same as teh following paper: Improving Protein Expression, Stability, and Function with ProteinMPNN (acs.org)
 
-the main objective is, given a PDB file in which the binder to modify is the chain X (It is recommended to call
-it A since AF2 rename it after to A) and binds to a target Y (Again, it si recommended to be called B), you can 
-run PMPNN over that structure keeping the key residues fixed. In case you dont know which are the key residue, 
-the program also detects the "closest interacting" residues and keep only those fixed'
+#the main objective is, given a PDB file in which the binder to modify is the chain X (It is recommended to call
+#it A since AF2 rename it after to A) and binds to a target Y (Again, it si recommended to be called B), you can 
+#run PMPNN over that structure keeping the key residues fixed. In case you dont know which are the key residue, 
+#the program also detects the "closest interacting" residues and keep only those fixed'
 
-:'This code is meant to be used in a folder with several PDBs to be modified, or only one, that should be inside a folder called input'
-:'Right now cannot be used with AF2 output files, but we hope that in a future it is used that way'
+#This code is meant to be used in a folder with several PDBs to be modified, or only one, that should be inside a folder called input'
+#Right now cannot be used with AF2 output files, but we hope that in a future it is used that way'
 
+#Small modification, seems that the distance cannot be obtained from the pMPNN output 
 while [[ $# -gt 0 ]]; do
     key="$1"
 
@@ -35,6 +36,7 @@ while [[ $# -gt 0 ]]; do
         shift
 done
 
+distance_counter=0
 counter=0
 for file in input/*.pdb; do #CHECK IF THIS LITTLE MOD WORKS FINE
 #Setting variables to 0
@@ -44,9 +46,11 @@ for file in input/*.pdb; do #CHECK IF THIS LITTLE MOD WORKS FINE
     #make a folder for each pdb file
     mkdir "design_${counter}"
     #Getting the interacting resiudes
-    jobx=$(pymol -c /data/cchacon/carlos/scripts/Carlos_scripts/pymol_distance_np.py --protein "$file" --peptide "$peptide" --chains "$chains" --csv "interacting_${counter}" )
-    echo "interacting.csv created"
-
+    for distance_file in distance_input/*.pdb; do 
+        jobx=$(pymol -c /data/carlos/scripts/Carlos_scripts/pymol_distance_np.py --protein "$distance_file" --peptide "$peptide" --chains "$chains" --csv "interacting_${distance_counter}" )
+        distance_counter=$((distance_counter+1))
+        echo "interacting.csv created"
+    done 
     #while loop to generate diversity
     while [[ $i -le $max ]];do
         
@@ -70,11 +74,11 @@ for file in input/*.pdb; do #CHECK IF THIS LITTLE MOD WORKS FINE
         joby=$(pymol -c /data/cchacon/carlos/scripts/Carlos_scripts/structure_save.py --protein "$file" --i "$counter" --folder "$actual_folder")
 
         #we fix residues 
-        if [ -n "$indices"];then #If we specify some indexes (it still fix the csv)
-            job1_1=$(python3 /data/cchacon/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv interacting_${counter})
+        if [ -n "$indices" ];then #If we specify some indexes (it still fix the csv) This doesn't work yet
+            job1_1=$(python3 /data/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --indices "$indices" --csv interacting_${counter})
             echo " Residues fixed at positions ${indices}"
         else
-            job1_2=$(python3 /data/cchacon/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --csv interacting_${counter})
+            job1_2=$(python3 /data/carlos/scripts/Carlos_scripts/fixed_trial.py --pdbs "$input_fixed" --csv interacting_${counter})
             echo "residues fixed"
         fi
         #pdbs to silent 
