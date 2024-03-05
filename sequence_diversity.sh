@@ -1,14 +1,14 @@
 
-:'This is code thought to be used as a sequence diversity generator from a given PDB.
-It pretty much does the same as teh following paper: Improving Protein Expression, Stability, and Function with ProteinMPNN (acs.org)
+#This is code thought to be used as a sequence diversity generator from a given PDB.
+#It pretty much does the same as teh following paper: Improving Protein Expression, Stability, and Function with ProteinMPNN (acs.org)
 
-the main objective is, given a PDB file in which the binder to modify is the chain X (It is recommended to call
-it A since AF2 rename it after to A) and binds to a target Y (Again, it si recommended to be called B), you can 
-run PMPNN over that structure keeping the key residues fixed. In case you dont know which are the key residue, 
-the program also detects the "closest interacting" residues and keep only those fixed'
+#the main objective is, given a PDB file in which the binder to modify is the chain X (It is recommended to call
+#it A since AF2 rename it after to A) and binds to a target Y (Again, it si recommended to be called B), you can 
+#run PMPNN over that structure keeping the key residues fixed. In case you dont know which are the key residue, 
+#the program also detects the "closest interacting" residues and keep only those fixed'
 
-:'This code is meant to be used in a folder with several PDBs to be modified, or only one, that should be inside a folder called input'
-:'Right now cannot be used with AF2 output files, but we hope that in a future it is used that way'
+#This code is meant to be used in a folder with several PDBs to be modified, or only one, that should be inside a folder called input'
+#Right now cannot be used with AF2 output files, but we hope that in a future it is used that way'
 
 while [[ $# -gt 0 ]]; do
     key="$1"
