@@ -5,6 +5,12 @@ source /apps/profile.d/load_all.sh
 
 # 1: Get all info needed
 ## Parse command-line arguments
+
+#Set defaults
+
+partial_diff= "False"
+noise_steps=20
+
 while [[ $# -gt 0 ]]; do
     key="$1"
 
