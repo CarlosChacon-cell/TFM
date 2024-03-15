@@ -51,7 +51,7 @@ done
 
 # Display the parsed values
 machine=`hostname`
-echo "Current machine $machine"
+echo "Current machine $machine"diffuser.partial_T=
 echo "You chose the following input values:"
 echo "  - output prefix: $output_prefix"
 echo "  - input PDB: $input_pdb"
