@@ -1,7 +1,7 @@
 
-#V1.1
-#REMOVING THE STRUCUTURE SAVE SO I CAN ALIGN IT WITH THE ORIGINAL
-#20240220
+#V1.2
+#Removing protein_name beacause it is not needed and fuck the process
+#20240305
 #pymol distance getter. iterative process that checks if the distance between
 #any aminoacid of the pirulo and any aminoacid of the interior of both proteins
 
@@ -155,17 +155,23 @@ prot_trp_residues={args.chains:storedprottrp}
 
 for i in lig_aro_residues:
     for j in lig_aro_residues[i]:
-        if j not in lig_trp_residues[args.peptide]:
-            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name cg+cz')
+        if j in lig_trp_residues[args.peptide]:
+            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'chain {args.peptide} and resi {j} and name ce3+cz2')
+            print ('TRP pseudoatom created')
         else:
-             lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name ce3+cz2')
+            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'chain {args.peptide} and resi {j} and name cg+cz')
+            print ('not TRP pseudoatom created')
+
 
 for k in prot_aro_residues: 
-            for l in prot_aro_residues[k]:
-                if l not in prot_trp_residues[args.chains]:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name cg+cz')
-                else:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name ce3+cz2')
+    for l in prot_aro_residues[k]:
+        if l in prot_trp_residues[args.chains]:
+            prot_center=cmd.pseudoatom(f'prot_center_{l}', f'chain {args.chains} and resi {l} and name ce3+cz2')
+            print ('TRP pseudoatom created')
+        else:
+            prot_center=cmd.pseudoatom(f'prot_center_{l}', f' chain {args.chains} and resi {l} and name cg+cz')
+            print ('not TRP pseudoatom created')
+
 
 # Another loop to store this residues 
 for i in lig_aro_residues:
@@ -263,16 +269,16 @@ prot_trp_residues={args.chains:storedprottrp}
 for i in lig_aro_residues:
     for j in lig_aro_residues[i]:
         if j not in lig_trp_residues[args.peptide]:
-            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name cg+cz')
+            lig_center=cmd.pseudoatom(f'lig_center_{j}', f'chain {args.peptide} and resi {j} and name cg+cz')
         else:
-             lig_center=cmd.pseudoatom(f'lig_center_{j}', f'{protein_name} and chain {args.peptide} and resi {j} and name ce3+cz2')
+             lig_center=cmd.pseudoatom(f'lig_center_{j}', f'chain {args.peptide} and resi {j} and name ce3+cz2')
 
 for k in prot_aro_residues: 
             for l in prot_aro_residues[k]:
                 if l not in prot_trp_residues[args.chains]:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name cg+cz')
+                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'chain {args.chains} and resi {l} and name cg+cz')
                 else:
-                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'{protein_name} and chain {args.chains} and resi {l} and name ce3+cz2')
+                    prot_center=cmd.pseudoatom(f'prot_center_{l}', f'chain {args.chains} and resi {l} and name ce3+cz2')
 
 
 # Another loop to store this residues 
