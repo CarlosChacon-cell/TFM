@@ -2,7 +2,7 @@
 #Create the ions file based on a mdp (I think any .mdp is valid)
 gmx grompp -f ions.mdp -c solvate.gro -p topol.top -o ions.tpr
 #Add ions to the system to neutralize charges
-echo "14"|gmx genion -s ions.tpr -o solvate.gro -p topol.top -pname NA -nname CL -neutral -conc 0.1 #Conc to 0.1M to mimick mitochondria conditions
+echo "13"|gmx genion -s ions.tpr -o solvate.gro -p topol.top -pname NA -nname CL -neutral -conc 0.15 #Conc to 0.1M to mimick mitochondria conditions
 #Create minimization tpr file from the em.mdp (this time it is important) 
 gmx grompp -f em.mdp -c solvate.gro -p topol.top -o em.tpr -maxwarn 1
 wait 
