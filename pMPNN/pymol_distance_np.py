@@ -323,10 +323,10 @@ score_file='scores.csv'
 if not os.path.exists(score_file):
     # File doesn't exist, create it and write the header
     with open(score_file, 'w') as file:
-        file.write('description'+ '\t' + 'INTERACTING FILE'+ '\t' + 'SCORE'+ '\n')
+        file.write('description'+ ',' + 'INTERACTING FILE'+ ',' + 'SCORE'+ '\n')
 
 with open(score_file, 'a') as file:
-     file.write(f"{protein_name}\t{args.csv}\t{total_score}\n")
+     file.write(f"{protein_name},{args.csv},{total_score}\n")
 
 
 #close pymol
