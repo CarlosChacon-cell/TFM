@@ -8,8 +8,11 @@ source /apps/profile.d/load_all.sh
 
 #Set defaults
 
-partial_diff= "False"
+partial_diff="False"
 noise_steps=20
+pmp_nseqs=1
+rfd_ndesigns=8
+pmp_relax_cycles=1
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -27,7 +30,7 @@ while [[ $# -gt 0 ]]; do
             max="$2"
             shift 
             ;;    
-        --rfd_contigs) #   REMEMBER, THIS MUST BE SOMETHING LIKE [LEN_BINDER-LEN_BINDER\0 B1-LEN_RAGAC]
+        --rfd_contigs) #   Automatic for partial diffusion
             rfd_contigs="$2"
             shift
             ;;    
@@ -118,7 +121,8 @@ while true; do
     #'contigmap.contigs=[len-len/0 B1-len]' (I think is 0 index so len-1)
     #You specify that the chain A is the one to modify and that the chain B must be keep intact
     #You have to also add the diffuser.partial_T=20 (recommended, 2/5 of the total numbers of step for noising )
-    if [ $partial_diff = "True" ]; then                                                         #This is the one to modify
+    if [ $partial_diff = "True" ]; then
+        rfd_contigs=$(python3 /home/cchacon/cchacon/carlos/scripts/Carlos_scripts/RFD/contigs_getter_pd.py --file inputs/*)
         jid1=$(sbatch /emdata/cchacon/RFD_partial_diff/submit_inference_partial_diff.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs"  --designs_n "$rfd_ndesigns" --noise_steps "$noise_steps")
         jid1dep=`echo $jid1 | awk '{print $4}'`
         echo "Submitted RFD with jobid: $jid1dep"

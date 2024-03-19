@@ -1,6 +1,6 @@
 
 #This is just to build the ymla files neccesary for the RFAA from the PDB/fasta and compfile
-
+import os 
 import argparse
 import re 
 
@@ -20,21 +20,29 @@ def pdb_to_fasta(pdb_file):
             if line.startswith("ATOM") and line[13:15] == "CA":
                 # Extract the amino acid code
                 aa = line[17:20].strip()
+                sequence+=aa
 
                 # Append the amino acid to the sequence
                         
-
     return sequence
 
 
+def get_file_type(file_path):
+    _, file_extension = os.path.splitext(file_path)
+    file_extension=file_extension.split('.')[1]
+    return file_extension.lower()
+
+def get_file_name(file_path):
+    return os.path.splitext(os.path.basename(file_path))[0]
 
 
-pattern=r'(?:.)(*$)'
-comptype=re.search(pattern, args.comp)
-comptype=comptype.group[0]
-pattern1=r'(^*)(?:.)'
-comp_name=re.search(pattern1, args.comp)
-comp_name=comp_name.group[0]
+
+
+
+comp_path = args.comp
+comptype = get_file_type(comp_path)
+comp_name = get_file_name(comp_path)
+
 
 if args.fasta:
     with open(f'{args.protein}', 'r') as fastafile:
@@ -57,27 +65,29 @@ if args.fasta:
                 + '\n'
                 + 'sm_inputs:\n'
                 + '  ' + 'B:\n'
-                + '\t' + f'input: {args.com}'
+                + '\t' + f'input: {args.comp}\n'
                 + '\t' + f'input_type: \"{comptype}\"')
                 
 if args.pdb:
     fasta_sequence=pdb_to_fasta(args.pdb)
-    pattern = r'^[0-9a-zA-Z]'
-    protein_name=re.search(pattern, args.pdb)
-    protein_name=protein_name.group[0]
-
-    filename=(f'{args.folder}/{protein_name}{comp_name}')
+    protein_name=get_file_name(args.pdb)
+    fasta_name = f'fasta/{protein_name}.fasta'
+    with open(fasta_name, 'w') as fasta:
+        fasta.write(f'>{protein_name}\n' + 
+                   fasta_sequence)
+        
+    filename=(f'{args.folder}/{protein_name}_{comp_name}.yaml')
 
     with open(filename, 'w') as file:
         file.write('defaults:\n'
                 +'  '+'- base\n'
                 + '\n'
                 + '  ' + 'A:\n'
-                + '\t'+f'fasta_file: {args.fasta}\n'
+                + '\t'+f'fasta_file: {fasta_name}\n'
                 + '\n'
                 + 'sm_inputs:\n'
                 + '  ' + 'B:\n'
-                + '\t' + f'input: {args.com}'
+                + '\t' + f'input: {args.comp}\n'
                 + '\t' + f'input_type: \"{comptype}\"')
 
 

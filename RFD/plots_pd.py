@@ -47,6 +47,7 @@ for i in folder_list:
             print(df)
             dataframes.append(df)
 
+#if args.pd == 1 :
 
 
 
@@ -113,6 +114,8 @@ fig, axs = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), gridspec
 # Flatten the axs array to make it easier to iterate over
 axs = axs.ravel()
 
+if args.pd == 1:
+    o
 
 # Iterate through unique values in 'Hotspot' and create scatterplots
 for i, (hotspot, color) in enumerate(colors.items()):
@@ -160,27 +163,29 @@ for i, (hotspot, color) in enumerate(colors.items()):
 # Show the plot
 plt.show()
 
-# Create a single figure with subplots
-fig, axs = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), gridspec_kw={'hspace': 0.5})
+
+if args.pd != 1:
+    # Create a single figure with subplots
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), gridspec_kw={'hspace': 0.5})
 
 
-# Flatten the axs array to make it easier to iterate over
-axs = axs.ravel()
+    # Flatten the axs array to make it easier to iterate over
+    axs = axs.ravel()
 
 
-# Iterate through unique values in 'Hotspot' and create scatterplots
-for i, (hotspot, color) in enumerate(colors.items()):
-    subset = combined_df[combined_df['campaign'] == hotspot]
-    axs[i].scatter(subset['pae_interaction'], subset['len'], c=color)
-    axs[i].set_title(f'{hotspot} - Total: {len(subset)}')
-    axs[i].set_xlabel('pae_interaction')
-    axs[i].set_ylabel('length')
-    axs[i].axvline(x=10, color='gray', linestyle='--')
+    # Iterate through unique values in 'Hotspot' and create scatterplots
+    for i, (hotspot, color) in enumerate(colors.items()):
+        subset = combined_df[combined_df['campaign'] == hotspot]
+        axs[i].scatter(subset['pae_interaction'], subset['len'], c=color)
+        axs[i].set_title(f'{hotspot} - Total: {len(subset)}')
+        axs[i].set_xlabel('pae_interaction')
+        axs[i].set_ylabel('length')
+        axs[i].axvline(x=10, color='gray', linestyle='--')
 
-# Hide any empty subplots
-for i in range(num_unique_hotspots, num_rows * num_cols):
-    fig.delaxes(axs[i])
+    # Hide any empty subplots
+    for i in range(num_unique_hotspots, num_rows * num_cols):
+        fig.delaxes(axs[i])
 
-# Show the plot
-plt.show()
+    # Show the plot
+    plt.show()
 

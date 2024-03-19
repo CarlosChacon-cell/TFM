@@ -33,4 +33,4 @@ def parse_pdb(pdb_file):
 if __name__ == "__main__":
     pdb_file = args.file
     result = parse_pdb(pdb_file)
-    print("Result:", result)
+    print(result)
