@@ -41,9 +41,9 @@ while [[ $# -gt 0 ]]; do
             noise_steps="$2"
             shift
             ;;
-        --noise_values)
-            noise_values="$2"
-            shift 
+        --noise_scale)
+            noise_scale="$2"
+            shift
             ;;
         *)
             echo "Unknown option: $1"
@@ -61,15 +61,14 @@ echo "  - output prefix: $output_prefix"
 echo "  - input PDB: $input_pdb"
 echo "  - contigmap descriptor: $contigmap_descriptor"
 echo "  - number of designs: $designs_n"
-echo "  - noise steps: $noise_steps"
-echo "  - noise values: $noise_values"
-
+echo "  - number of noise steps: $noise_steps"
+echo "  - noise scale: $noise_scale"
 
 # Activate environment
 source /apps/profile.d/load_all.sh
 conda activate SE3nv
 wait
 # Run!
-/apps/rosetta/RFDifussion/scripts/run_inference.py inference.output_prefix="$output_prefix" inference.input_pdb="$input_pdb" contigmap.contigs="$contigmap_descriptor"  inference.num_designs="$designs_n" diffuser.partial_T="$noise_steps" denoiser.noise_scale_ca="$noise_values" denoiser.noise_scale_frame="$noise_values"
+/apps/rosetta/RFDifussion/scripts/run_inference.py inference.output_prefix="$output_prefix" inference.input_pdb="$input_pdb" contigmap.contigs="$contigmap_descriptor"  inference.num_designs="$designs_n" diffuser.partial_T="$noise_steps" denoiser.noise_scale_ca="$noise_scale" denoiser.noise_scale_frame="$noise_scale"
 
 echo "done"
