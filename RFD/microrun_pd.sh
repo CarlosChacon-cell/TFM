@@ -58,6 +58,10 @@ while [[ $# -gt 0 ]]; do
             noise_steps="$2"
             shift
             ;;
+        --noise_values)
+            noise_values="$2"
+            shift 
+            ;;  
         *)
         echo "Unknown option: $1"
             exit 1
@@ -123,10 +127,12 @@ while true; do
     #You have to also add the diffuser.partial_T=20 (recommended, 2/5 of the total numbers of step for noising )
     if [ $partial_diff = "True" ]; then
         rfd_contigs=$(python3 /home/cchacon/cchacon/carlos/scripts/Carlos_scripts/RFD/contigs_getter_pd.py --file inputs/*)
-        jid1=$(sbatch /emdata/cchacon/RFD_partial_diff/submit_inference_partial_diff.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs"  --designs_n "$rfd_ndesigns" --noise_steps "$noise_steps")
+        jid1=$(sbatch /emdata/cchacon/RFD_partial_diff/submit_inference_partial_diff.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs"  --designs_n "$rfd_ndesigns" --noise_steps "$noise_steps" --noise_values "$noise_values")
         jid1dep=`echo $jid1 | awk '{print $4}'`
         echo "Submitted RFD with jobid: $jid1dep"
     else 
+        echo "it is going to work"
+        sleep 120
         jid1=$(sbatch submit_run_inference.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs" --hotspots_descriptor "$rfd_hotspots"  --designs_n "$rfd_ndesigns")
         jid1dep=`echo $jid1 | awk '{print $4}'`
         echo "Submitted RFD with jobid: $jid1dep"
