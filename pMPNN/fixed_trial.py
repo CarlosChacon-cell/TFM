@@ -10,8 +10,8 @@ import pandas as pd
 parser = argparse.ArgumentParser()
 parser.add_argument("--pdbdir", type=str)
 parser.add_argument("--pdbs", type=str)
-parser.add_argument("--indices", required=True, nargs='+')
-parser.add_argument("--csv")
+parser.add_argument("--indices", required=False, nargs='+')
+parser.add_argument("--csv", required = False)
 parser.add_argument("--verbose", action="store_true", default=False)
 args = parser.parse_args()
 
@@ -22,32 +22,28 @@ def generate_range(numbers):
 
 #Now i put the indices, generating a range if there is any hyphen
 indices=[]
-positions=args.indices
-positions=positions[0].split(',')
-pattern= r'\d+-\d+'
-for number in positions:
-    match = re.search(pattern, number)
-    if match:
-        numbers=list(number.split('-'))
-        numbers=generate_range(numbers)
-        for number in numbers:
-            indices.append(number)
-    else:
-        indices.append(int(number))
+if args.indices:
+    positions=args.indices
+    positions=positions[0].split(',')
+    pattern= r'\d+-\d+'
+    for number in positions:
+        match = re.search(pattern, number)
+        if match:
+            numbers=list(number.split('-'))
+            numbers=generate_range(numbers)
+            for number in numbers:
+                indices.append(number)
+        else:
+            indices.append(int(number))
 
 #read the interacting.csv and add new residues to the indices
-try: 
+if args.csv:
     interacting_df=pd.read_csv(f'./{args.csv}.csv', sep='\t')
     for i in interacting_df['pept_res']:
         if i not in indices:
             indices.append(int(i))
         else:
             continue
-except FileNotFoundError:
-    dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'DA_AD': []}
-    interacting_residues=pd.DataFrame(dict)
-    interacting_residues.to_csv(f'./interacting_0.csv', sep='\t')
-
 
 
 #pdb path
