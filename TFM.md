@@ -18,8 +18,19 @@ The complex RagA-RagC-TFEB-Raptor was obtained by coexpression and its structure
 
 ![alt text](/figures/complex_structure.png "Complex structure")
 
-They also perform different mutation assays that help them gaina different insights into TFEB inactivation.
+### STRUCTURE DETAILS
 
 The **S211A** mutation stabilizes the TFEB association with the RagGTPases in cells.
 
-**TFEB residues 2-105 are both necessary and sufficient** to form a stable complex with the RagGTPases: The first 40 residues form an alpha helix that occupies the cleft between the two G domains of the non-canonical (nc) dimer of RagA GTP and RagC GDP. Residues 2-18 of TFEB form a 570 $$1\overset{\circ}{A}$$ &#8491  interface
+**TFEB residues 2-105 are both necessary and sufficient** to form a stable complex with the RagGTPases: **The first 40 residues form an alpha helix that occupies the cleft** between the two G domains of the non-canonical (nc) dimer of RagA GTP and RagC GDP. Residues 2-18 of TFEB form a $$570{\circ}{A}$$ interface with the RagC GDP G domain.
+
+TFEB is clamped in the cleft by **hydrogen bonds between RagC D294 and the backbone of the TFEB R4 and I5**, and **salt bridges between RagC D290 and TFEB R4 and R8**. More hydrophobic contacts between TFEB L7/11 and RagC V80, I220 and between TFEB Q15 sidechain and RagC Y221.
+
+TFEB interacts with RagA through a stacking interaction between the carbon chain of R13 and RagA W165 and hydrophobic contacts between TFEB I5, M9 nad RagA I234. Moreover, there are also another interaction between TFEB 76-83 and RagA GTP alpha 4 (TFEB L76 with a hydrophobic pocket and a salt bridge between TFEB H84 and RagA E111). M
+
+**TFEB mutants (I5D, L7D/R8D and M9D) were not phosphorylated** as well as **RagA mutants (H104D, Q107D,E111R)**, and thus is localized in the nucleus.
+
+
+
+RagC clamp is required for TFEB phosphorylation,and when we mutate D294R we avoid the phosphorylation of TFEB, which is then allocated in the nucleus.
+
