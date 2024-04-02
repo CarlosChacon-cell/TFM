@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+
+'''This code changes the order of the PDB, putting in first place the chain we are interested in
+Probabily this has been stolen out of CNIO code but seems written by chatGPT so maybe 
+I'm the "author" of this '''
+
+
 import argparse
 from Bio.PDB import PDBParser, PDBIO
 

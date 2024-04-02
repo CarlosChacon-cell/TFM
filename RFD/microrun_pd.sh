@@ -13,6 +13,9 @@ noise_steps=20
 pmp_nseqs=1
 rfd_ndesigns=8
 pmp_relax_cycles=1
+noise_scale=1
+
+
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -58,6 +61,11 @@ while [[ $# -gt 0 ]]; do
             noise_steps="$2"
             shift
             ;;
+        --noise_scale)
+            noise_scale="$2"
+            shift
+            ;;
+        
         *)
         echo "Unknown option: $1"
             exit 1
@@ -82,6 +90,13 @@ else
     i=0
 fi
 
+#contigs_getter
+
+if [ partial_diff="True" ]; then 
+        rfd_contigs=$(contigs_getter_pd.py --file $input)
+fi
+
+
 # RUN
 while true; do
     i=$((i+1))
@@ -97,7 +112,7 @@ while true; do
     
     # Set input, output and helping filenames
     output_rfd="output/run_$i/run_${i}_design"
-    input_pymol="output/run_$i/run_${i}_design_1.pdb"
+    input_pymol="output/run_$i/run_${i}_design_0.pdb"
     output_pymol="output/run_$i/run_${i}_template_aligned.pdb"
     input_sub="output/run_$i/"
     output_sub="output/run_$i/"
@@ -122,8 +137,7 @@ while true; do
     #You specify that the chain A is the one to modify and that the chain B must be keep intact
     #You have to also add the diffuser.partial_T=20 (recommended, 2/5 of the total numbers of step for noising )
     if [ $partial_diff = "True" ]; then
-        rfd_contigs=$(python3 /home/cchacon/cchacon/carlos/scripts/Carlos_scripts/RFD/contigs_getter_pd.py --file inputs/*)
-        jid1=$(sbatch /emdata/cchacon/RFD_partial_diff/submit_inference_partial_diff.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs"  --designs_n "$rfd_ndesigns" --noise_steps "$noise_steps")
+        jid1=$(sbatch submit_inference_partial_diff.sh --output_prefix "$output_rfd" --input_pdb "$input" --contigmap_descriptor "$rfd_contigs"  --designs_n "$rfd_ndesigns" --noise_steps "$noise_steps" --noise_scale "$noise_scale")
         jid1dep=`echo $jid1 | awk '{print $4}'`
         echo "Submitted RFD with jobid: $jid1dep"
     else 
