@@ -4,10 +4,14 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--json', help='json file', required=True)
+parser.add_argument('--protein', help='introduce your protein name, run_X_design_X')
 args = parser.parse_args()
 
 # Specify the path to your JSON file
 file_path = args.json
+
+#filepath=f'{args.protein}_dldesign0_pae.json'
+
 # Open the JSON file in read mode
 with open(file_path, 'r') as json_file:
     # Load the JSON data into a Python dictionary
@@ -18,11 +22,10 @@ with open(file_path, 'r') as json_file:
 pae=data['predicted_aligned_error']
 residues=[]
 mean=[]
-
+residuefilename=f'{args.protein}_dldesign_0_cycle1_af2pred.txt'
 with open('residues.txt', 'r') as resfile:
     for line in resfile:
         residues.append(int(line))
-
 
 binderlen=residues[0]
 residues=residues[1:]

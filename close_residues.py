@@ -22,7 +22,9 @@ cmd.iterate(selector.process(all), 'allset.add(resv)')
 
 length=len(allset)
 
-with open('residues.txt','w') as file:
+filename=f'{protein_name}_residues.txt'
+
+with open(filename,'w') as file:
     file.write(f'{length}\n')
 cmd.delete('sele')
 cmd.select(f'sele, chain A w. 4 of chain B')
@@ -34,7 +36,7 @@ cmd.iterate(selector.process(residues), 'resset.add(resv)')
 
 print(resset)
 
-with open('residues.txt','a') as file:
+with open(filename,'a') as file:
     for element in resset:
         file.write(f'{int(element)-1}\n')
 

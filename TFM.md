@@ -22,7 +22,7 @@ The complex RagA-RagC-TFEB-Raptor was obtained by coexpression and its structure
 
 The **S211A** mutation stabilizes the TFEB association with the RagGTPases in cells.
 
-**TFEB residues 2-105 are both necessary and sufficient** to form a stable complex with the RagGTPases: **The first 40 residues form an alpha helix that occupies the cleft** between the two G domains of the non-canonical (nc) dimer of RagA GTP and RagC GDP. Residues 2-18 of TFEB form a $$570{\circ}{A}$$ interface with the RagC GDP G domain.
+**TFEB residues 2-105 are both necessary and sufficient** to form a stable complex with the RagGTPases: **The first 40 residues form an alpha helix that occupies the cleft** between the two G domains of the non-canonical (nc) dimer of RagA GTP and RagC GDP. Residues 2-18 of TFEB form a 570 A interface with the RagC GDP G domain.
 
 TFEB is clamped in the cleft by **hydrogen bonds between RagC D294 and the backbone of the TFEB R4 and I5**, and **salt bridges between RagC D290 and TFEB R4 and R8**. More hydrophobic contacts between TFEB L7/11 and RagC V80, I220 and between TFEB Q15 sidechain and RagC Y221.
 
@@ -33,4 +33,7 @@ TFEB interacts with RagA through a stacking interaction between the carbon chain
 
 
 RagC clamp is required for TFEB phosphorylation,and when we mutate D294R we avoid the phosphorylation of TFEB, which is then allocated in the nucleus.
+
+
+
 
