@@ -59,7 +59,7 @@ cmd.load(args.protein)
 protein_name=args.protein.split('.')[0]
 # List to store distances
 
-dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'Polar_PP_CP': [], 'score':[]}
+dict={'pept_res':[ ], 'tar_res':[ ], 'distance':[ ], 'type': [], 'score':[]}
 # Residue indices
 
 cmd.select(f'sele, chain {args.peptide} w. 4 of chain {args.chains}')
@@ -92,11 +92,11 @@ for i in peptide_residues:
         for k in target_residues: 
             for l in target_residues[k]:
                 distance_polar = cmd.distance(f"chain {i} and resi {j} ", f"chain {k} and resi {l} ", mode=2)
-                if distance_polar <4 and distance_polar != 0:
+                if distance_polar < 4.5 and distance_polar != 0:
                     dict['pept_res'].append(j)
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_polar)
-                    dict['Polar_PP_CP'].append("Polar")
+                    dict['type'].append("Polar")
                     dict['score'].append(1/distance_polar**2)
                     print ('residue added')
                 else:
@@ -184,12 +184,12 @@ for i in lig_aro_residues:
                 print(f'{xyz_lig} \n')
                 xyz_prot=cmd.get_coords(f'prot_center_{l}////ps1')
                 angle=vecAngle(xyz_lig, xyz_prot)
-                if (distance_pp <7.5 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
+                if (distance_pp < 6 and distance_pp != 0.0) and (angle < dih_parallel or angle > dih_tshape) :
                     dict['pept_res'].append(j)
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_pp)
-                    dict['Polar_PP_CP'].append("PP")
-                    dict['score'].append(1/distance_pp**2)
+                    dict['type'].append("PP")
+                    dict['score'].append(1/distance_pp)
 
                
 # This first block search for ligand residues that can be involved in the interaction, restricting the search to only aromatic residues
@@ -288,11 +288,11 @@ for i in lig_aro_residues:
                 distance_cp = cmd.distance(f'lig_center_{j}////ps1', f'chain {args.chains} and resi {k} and name NH*')
                 print(f'distance is {distance_cp} \n')
                #Angle im not sure how to compute it or which angles to use 
-                if (distance_cp < 7.5 and distance_cp != 0.0) :
+                if (distance_cp < 6 and distance_cp != 0.0) :
                     dict['pept_res'].append(j)
                     dict["tar_res"].append(l)
                     dict['distance'].append(distance_cp)
-                    dict['Polar_PP_CP'].append("CP")
+                    dict['type'].append("CP")
                     dict['score'].append(1/distance_cp**2)
 
                     print ('residue added')
@@ -301,11 +301,11 @@ for k in prot_aro_residues:
                 for j in lig_cat_residues[args.peptide]:
                     distance_cp = (cmd.distance(f' chain {args.peptide} and resi {j} and name NH*', f'prot_center_{l}////ps1'))
                     print(f'distance is {distance_cp} \n')
-                    if (distance_cp < 7.5 and distance_cp != 0.0):
+                    if (distance_cp < 6 and distance_cp != 0.0):
                         dict['pept_res'].append(j)
                         dict["tar_res"].append(l)
                         dict['distance'].append(distance_cp)
-                        dict['Polar_PP_CP'].append("CP")
+                        dict['type'].append("CP")
                         dict['score'].append(1/distance_cp**2)
                         print ('residue added')
 
@@ -318,9 +318,9 @@ for i in dict['score']:
      total_score += i
 # Write the data to a text file
 with open(output_file, 'w') as file:
-    file.write('pept_res'+ '\t' + 'tar_res'+'\t'+'distance'+'\t'+'Polar_PP_CP'+'\t'+'SCORE'+'\n')
+    file.write('pept_res'+ '\t' + 'tar_res'+'\t'+'distance'+'\t'+'type'+'\t'+'SCORE'+'\n')
     for i in range(len(dict['distance'])):
-        file.write(f"{dict['pept_res'][i]}\t{dict['tar_res'][i]}\t{dict['distance'][i]}\t{dict['Polar_PP_CP'][i]}\t{dict['score'][i]}\n")
+        file.write(f"{dict['pept_res'][i]}\t{dict['tar_res'][i]}\t{dict['distance'][i]}\t{dict['type'][i]}\t{dict['score'][i]}\n")
     file.write(f'FINAL SCORE\t\t\t\t\t{total_score}')
 
 #We append the scores

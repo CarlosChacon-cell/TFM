@@ -24,7 +24,7 @@ if args.mode == 'G':
 
 # RMSD
 if args.mode == 'R':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'RMSD'])
+    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ns)', 'RMSD'])
     df.plot(x='time(ps)', y='RMSD')
     plt.savefig(os.path.join(output_folder, 'RMSD_plot.png'))  # Save plot as an image
     plt.close()
