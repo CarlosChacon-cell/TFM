@@ -84,7 +84,7 @@ else: extract_hits = False
 
 if extract_hits: 
     print('Hits will be extracted')
-    hits = combined_df[(combined_df['pae_interaction'] <= 10) & (combined_df['plddt_binder'] >= 80)]
+    hits = combined_df[(combined_df['pae_interaction'] <= 18) & (combined_df['plddt_binder'] >= 80)]
     for index, row in hits.iterrows():
         print('###############################\nEXTRACTING HIT\n###############################\n' + str(row))
         run_number = re.search(r'run_\d+', row['description']).group()

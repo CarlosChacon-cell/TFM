@@ -3,21 +3,33 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import re 
 
-pymol_scores=pd.read_csv('/emdata/cchacon/hits_compilation_20240227_NGR/all/scores.csv', header = 0, sep ='\t')
-print(pymol_scores)
+pymol_scores=pd.read_csv('/emdata/cchacon/hits_compilation_20240227_NGR/all/scores.csv', header = 0, sep =',')
+print(pymol_scores.keys())
 
 af2_scores=pd.read_csv('/emdata/cchacon/hits_compilation_20240227_NGR/all.csv', header=0, sep=',')
-print(af2_scores)
+stripped_keys = {key.strip(): value for key, value in af2_scores.items()}
+af2_scores = pd.DataFrame(stripped_keys)
+print(af2_scores.keys())
 
 df=pd.merge(pymol_scores, af2_scores, on='description')
+df.to_csv('plot.csv', index=False)
+
+
+
 print(df)
 
 pattern=r'^run_\d+'
 for i in range(0,len(df['description'])):
     descriptor=df['description'][i]
     target_name= re.search(pattern, descriptor)
-    target_name=target_name.group(0)
+    try:
+        target_name=target_name.group(0)
+    except AttributeError:
+        pattern1=r'alpha_\d+'
+        target_name= re.search(pattern1,descriptor)
+        target_name=target_name.group(0)
     df['description'][i]=target_name
 
 
