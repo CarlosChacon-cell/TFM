@@ -21,23 +21,11 @@ print(f'Running pymol on {input} ...')
 # Load the reference and target protein structures
 prefix=input
 
-pattern1=f'{input}/{prefix}_relaxed_rank_001_*000.pdb'
-pattern2=f'{input}/{prefix}_relaxed_rank_002_*000.pdb'
-pattern3=f'{input}/{prefix}_relaxed_rank_003_*000.pdb'
-pattern4=f'{input}/{prefix}_relaxed_rank_004_*000.pdb'
-pattern5=f'{input}/{prefix}_relaxed_rank_005_*000.pdb'
+pdb_list=glob.glob('*.pdb') #Meant to be run from a hits folder or something similar
 
-pdbin1=glob.glob(pattern1)
-pdbin2=glob.glob(pattern2)
-pdbin3=glob.glob(pattern3)
-pdbin4=glob.glob(pattern4)
-pdbin5=glob.glob(pattern5)
+for pdb in pdb_list:
+    cmd.load(pdbin1[0], "rank1")
 
-cmd.load(pdbin1[0], "rank1")
-cmd.load(pdbin2[0], "rank2")
-cmd.load(pdbin3[0], "rank3")
-cmd.load(pdbin4[0], "rank4")
-cmd.load(pdbin5[0], "rank5")
 
 cmd.align("rank2 and chain A and b>50","rank1 and chain A and b>50")
 cmd.align("rank3 and chain A and b>50","rank1 and chain A and b>50")
