@@ -38,7 +38,7 @@ print(resset)
 
 with open(filename,'a') as file:
     for element in resset:
-        file.write(f'{int(element)-1}\n')
+        file.write(f'{int(element)}\n')
 
 pymol.cmd.quit()
 

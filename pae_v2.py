@@ -7,7 +7,7 @@ parser.add_argument('--protein', help='introduce your protein name, run_X_design
 args = parser.parse_args()
 
 # Specify the path to your JSON file
-file_path = f'pae_{args.protein[:-11]}.json'
+file_path = f'pae_{args.protein[:-12]}.json'
 
 #filepath=f'{args.protein}_dldesign0_pae.json'
 
@@ -28,6 +28,7 @@ with open('residues.txt', 'r') as resfile:
 
 binderlen=residues[0]
 residues=residues[1:]
+residues=[int(number)-1 for number in residues]
 filtered_pae=pae[binderlen:]
 
 for lists in filtered_pae:
@@ -65,15 +66,17 @@ print('\n################\n')
 print('global_pae_interaction: ', pae_interaction_global)
 print('\n################\n')
 print('\n################\n')
+
 df=pd.DataFrame({
     'pae_interaction_local':[pae_interaction_local], 
-    'pae_interaction_global':[pae_interaction_global]
+    'pae_interaction_global':[pae_interaction_global],
+    'protein_name':[args.protein.split('.')[0]]
     })
 file_path='pae_local_global.csv'
 # Load existing CSV file into DataFrame
 try:
     existing_data = pd.read_csv('pae_local_global.csv')
-    updated_data = existing_data.append(df, ignore_index=True)
+    updated_data = pd.concat([existing_data,df], ignore_index=True)
     updated_data.to_csv('pae_local_global.csv', index=False)
 except FileNotFoundError:
     df.to_csv(file_path, index=False)
