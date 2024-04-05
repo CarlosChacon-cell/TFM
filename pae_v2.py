@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import json
 import argparse
@@ -8,8 +10,8 @@ args = parser.parse_args()
 
 # Specify the path to your JSON file
 file_path = f'pae_{args.protein[:-12]}.json'
+protein_name=args.protein.split('.')[0]
 
-#filepath=f'{args.protein}_dldesign0_pae.json'
 
 # Open the JSON file in read mode
 with open(file_path, 'r') as json_file:
@@ -21,22 +23,46 @@ with open(file_path, 'r') as json_file:
 pae=data['predicted_aligned_error']
 residues=[]
 mean=[]
-residuefilename=f'{args.protein[:-4]}.txt'
-with open('residues.txt', 'r') as resfile:
-    for line in resfile:
-        residues.append(int(line))
+residuefilename='close_residues.csv'
 
-binderlen=residues[0]
-residues=residues[1:]
-residues=[int(number)-1 for number in residues]
-filtered_pae=pae[binderlen:]
+residues_df=pd.read_csv(residuefilename)
+binderlen=residues_df['length'][residues_df['protein_name']==protein_name]
+binderlen=int(binderlen.iloc[0])
+residues=residues_df['interacting_residues'][residues_df['protein_name']==protein_name].str.split()
+residues=residues.to_list()[0]
+if type(residues)==float:
+    pae_interaction_global=35
+    pae_interaction_local=35
+else:
+    residues=[int(number)-1 for number in residues]
+    filtered_pae=pae[binderlen:]
 
-for lists in filtered_pae:
-    for residue in residues:
-        mean.append(lists[residue])
-pae_interaction_local=np.mean(mean)
+    for lists in filtered_pae:
+        for residue in residues:
+            mean.append(lists[residue])
+    pae_interaction_local=np.mean(mean)
+
+    pae1=pae[binderlen:]
+
+    pae2=pae[:binderlen]
+
+    pae1_filtered=[]
+    pae2_filtered=[]
+
+    for lista in pae1:
+        pae1_filtered.append(lista[:binderlen])
+
+    for lista in pae2:
+        pae2_filtered.append(lista[binderlen:])
+
+    pae_interaction_global=(np.mean(pae1_filtered)+np.mean(pae2_filtered))/2
 
 
+df=pd.DataFrame({
+'pae_interaction_local':[pae_interaction_local], 
+'pae_interaction_global':[pae_interaction_global],
+'protein_name':[args.protein.split('.')[0]]
+})
 
 print('\n################\n')
 print('\n################\n')
@@ -44,34 +70,11 @@ print('local_pae_interaction: ', pae_interaction_local)
 print('\n################\n')
 print('\n################\n')
 
-pae1=pae[binderlen:]
-
-pae2=pae[:binderlen]
-
-pae1_filtered=[]
-pae2_filtered=[]
-
-for lista in pae1:
-    pae1_filtered.append(lista[:binderlen])
-
-for lista in pae2:
-    pae2_filtered.append(lista[binderlen:])
-
-
-
-pae_interaction_global=(np.mean(pae1_filtered)+np.mean(pae2_filtered))/2
-
 print('\n################\n')
 print('\n################\n')
 print('global_pae_interaction: ', pae_interaction_global)
 print('\n################\n')
 print('\n################\n')
-
-df=pd.DataFrame({
-    'pae_interaction_local':[pae_interaction_local], 
-    'pae_interaction_global':[pae_interaction_global],
-    'protein_name':[args.protein.split('.')[0]]
-    })
 file_path='pae_local_global.csv'
 # Load existing CSV file into DataFrame
 try:

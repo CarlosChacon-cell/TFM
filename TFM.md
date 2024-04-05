@@ -37,3 +37,17 @@ RagC clamp is required for TFEB phosphorylation,and when we mutate D294R we avoi
 
 
 
+
+
+
+
+
+
+
+
+05/04
+Aqui voy a apuntar solo unas cosillas que si no se me olvidan:
+Ya tenemos el pae_interaction local funcionando y un pipeline para correrlo sobre los hits, y voy a modificar el submit_af2_interfaces para que coja el cutre
+Le he mandado a Rafa las mutantes de PolG a ver si que hay que hacer mas
+En ashoka parece que el af2 tarda approx 100 segundos menos que en la maquina local
+Working in ashoka and ready to go
