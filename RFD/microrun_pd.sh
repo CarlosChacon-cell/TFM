@@ -14,6 +14,8 @@ pmp_nseqs=1
 rfd_ndesigns=8
 pmp_relax_cycles=1
 noise_scale=1
+#contigs_getter
+rfd_contigs=$(contigs_getter_pd.py --file $input)
 
 
 
@@ -81,6 +83,7 @@ done
 
 mkdir -p ./slurm_logs
 mkdir -p ./output
+mkdir -p ./jsons
 
 last_run_folder=$(ls -d "./output/run_"* 2>/dev/null | sort -V | tail -n 1 | sed 's#./output/run_##')
 
@@ -90,11 +93,7 @@ else
     i=0
 fi
 
-#contigs_getter
 
-if [ partial_diff="True" ]; then 
-        rfd_contigs=$(contigs_getter_pd.py --file $input)
-fi
 
 
 # RUN
@@ -166,5 +165,9 @@ while true; do
     jid5=$(sbatch --dependency=afterany:$jid4dep submit_finish_microrun.sh --output "$end_touch")
     jid5dep=`echo $jid5 | awk '{print $4}'`
     echo "Submitted final touch fo run $i with jobid: $jid5dep waiting for $jid4dep to finish"
+
+    #7: Move all json to a json folder
+    wait 
+    mv *json jsons/.
 
 done

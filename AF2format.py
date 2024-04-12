@@ -23,7 +23,7 @@ with open(args.target, 'r') as target_fasta_file:
 # Create lists to store the data
 fasta_names = []
 fasta_sequences = []
-pattern1=r'^[^_]+'
+pattern1=r'run_\d+'
 # Parse the target.fasta data
 for i in range(0, len(fasta_lines), 2):
     header = fasta_lines[i].strip().lstrip('>')
@@ -75,7 +75,7 @@ new_df = merged_df[['FastaName', 'merged_sequences']].copy()
 output_directory = 'AF2_runs'
 if not os.path.exists(output_directory):
     os.mkdir(output_directory)
-pattern1=r'^[^_]+'
+pattern1=r'run_\d+'
 
 for index, row in new_df.iterrows():
     fasta_name = row['FastaName']
@@ -88,10 +88,10 @@ for index, row in new_df.iterrows():
 
 
 print("Folders and input files created successfully.")
-
+print(fasta_names)
 # AF2 Submission commands
 slurm_script = "af2_submit_script"
-output_script_filename = "submit_af2_screen.sh"
+output_script_filename = f"submit_af2_screen_{target_name}.sh"
 with open(output_script_filename, "w") as output_script_file:
     for index, row in new_df.iterrows():
         fasta_name = row['FastaName']

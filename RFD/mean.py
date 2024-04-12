@@ -16,9 +16,10 @@ median_values = filtered_df.groupby('campaign')[['plddt_binder', 'pae_interactio
 
 print('median values: \n', median_values)
 
-total_designs=df.groupby('campaign').len()
-success_designs=filtered_df.groupby('campaign').len()
 
-success_rate=success_designs/total_designs
+for campaign in set(df['campaign']):
+    total_designs=len(df[df['campaign']==campaign])
+    success_designs=len(filtered_df[filtered_df['campaign']==campaign])
+    success_rate=success_designs/total_designs
 
-print('success rates: \n', success_rate)
+    print(campaign,' Total designs: ',total_designs, ' Success: ', success_designs, ' Success_rate: ',success_rate*100 )

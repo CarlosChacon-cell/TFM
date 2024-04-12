@@ -22,7 +22,7 @@ print(f'Running pymol on {input} ...')
 # Load the reference and target protein structures
 prefix=input
 
-pdb_list=glob.glob(f'*aln.pdb') #Meant to be run from a hits folder or something similar
+pdb_list=glob.glob(f'*.pdb') #Meant to be run from a hits folder or something similar
 protein_names=[]
 
 
@@ -37,25 +37,24 @@ for pdb in pdb_list:
 
 cmd.load(args.og,"original")
 
-# for protein in protein_names:
-#     cmd.align(f"{protein}","original")
+for protein in protein_names:
+    cmd.align(f"{protein}","original")
 
 
-# Calculate RMSD between chains
-chains = ["A", "B"]
-csv_file_name = f'{input}/{prefix}_rmsd.csv'
+#Calculate RMSD between chains
+chains = ["A","B"]
+csv_file_name = f'{input}/rmsd.csv'
 with open(csv_file_name, 'w') as csv_file:
-    csv_file.write("Rank,Chain,Global RMSD,Selective RMSD (B>50)\n")
+    csv_file.write("Rank,Chain,Global RMSD\n")
     for protein in protein_names:
-        for chain in chains:
-            global_rmsd = cmd.rms_cur(f"{protein} and chain {chain}", f"original and chain {chain}")
-            selective_rmsd = cmd.rms_cur(f"{protein} and chain {chain} and b>50", f"original and chain {chain} and b>50")
-            csv_file.write(f"{protein},{chain},{global_rmsd},{selective_rmsd}\n")
+        global_rmsd=cmd.rms_cur(f'{protein} and chain A and name CA' , 'original and chain A and name CA')
+        #selective_rmsd = cmd.rms_cur(f'{protein} and chain A and b>50', f'original and chain A and b>50')
+        csv_file.write(f"{protein},'A',{global_rmsd}\n")
 
 print(f'RMSD values have been saved to {csv_file_name}')
 
-for protein in protein_names:
-    cmd.save(f'{protein}_aln.pdb', f'{protein}')
+# for protein in protein_names:
+#     cmd.save(f'{protein}_aln.pdb', f'{protein}')
 
 
 print("Done!")
