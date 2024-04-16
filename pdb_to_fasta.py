@@ -1,6 +1,12 @@
 import sys
 from Bio import SeqIO
 import re
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--input", "-i", help = "input file")
+parser.add_argument("--chain", "-c", help="chain to extract")
+args, unknown = parser.parse_known_args()
 
 def remove_remark_lines(input_file, output_file):
     with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
@@ -18,14 +24,16 @@ def extract_chain_sequence(input_file, chain_id):
     return sequences
 
 pattern = r'run_\d+'
-PDBFile = sys.argv[1]
+PDBFile = args.input
 PDB_out = f'{PDBFile[:-4]}_noremarks.pdb'
 fasta_name = re.search(pattern, PDBFile).group(0)
 
 remove_remark_lines(PDBFile, PDB_out)
-chain_sequences = extract_chain_sequence(PDB_out, 'A')
+if args.chain:
+    chain=args.chain
+    chain_sequences = extract_chain_sequence(PDB_out, chain)
 
-fasta_file = f'{fasta_name}_chainA.fasta'
+fasta_file = f'{fasta_name}_chain{args.chain}.fasta'
 with open(fasta_file, 'w') as fasta:
     for chain_id, seq in chain_sequences.items():
         fasta.write(f'>{fasta_name}_{chain_id}\n{seq}\n')
