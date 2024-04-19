@@ -9,7 +9,7 @@ parser.add_argument('--protein', help='introduce your protein name, run_X_design
 args = parser.parse_args()
 
 # Specify the path to your JSON file
-file_path = f'pae_{args.protein[:-12]}.json'
+file_path = f'./jsons/pae_{args.protein[5:-4]}.json'
 protein_name=args.protein.split('.')[0]
 
 
@@ -23,11 +23,13 @@ with open(file_path, 'r') as json_file:
 pae=data['predicted_aligned_error']
 residues=[]
 mean=[]
-residuefilename='close_residues.csv'
+residuefilename='/emdata/cchacon/TRF1/20240415_campaign_hotspotDIM_TRF1/close_residues.csv'
 
-residues_df=pd.read_csv(residuefilename)
+residues_df=pd.read_csv(residuefilename, index_col=False)
+
 binderlen=residues_df['length'][residues_df['protein_name']==protein_name]
 binderlen=int(binderlen.iloc[0])
+interacting_surface=float(residues_df['interacting_surface'][residues_df['protein_name']==protein_name].iloc[0])
 residues=residues_df['interacting_residues'][residues_df['protein_name']==protein_name].str.split()
 residues=residues.to_list()[0]
 if type(residues)==float:
@@ -61,7 +63,9 @@ else:
 df=pd.DataFrame({
 'pae_interaction_local':[pae_interaction_local], 
 'pae_interaction_global':[pae_interaction_global],
-'protein_name':[args.protein.split('.')[0]]
+'protein_name':[args.protein.split('.')[0]],
+'length': [binderlen],
+'interacting_surface':[interacting_surface]
 })
 
 print('\n################\n')
