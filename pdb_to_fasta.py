@@ -23,11 +23,15 @@ def extract_chain_sequence(input_file, chain_id):
                 sequences[chain] = record.seq
     return sequences
 
-pattern = r'run_\d+'
+pattern = r'run_\d+_design_\d+'
 PDBFile = args.input
-PDB_out = f'{PDBFile[:-4]}_noremarks.pdb'
-fasta_name = re.search(pattern, PDBFile).group(0)
+PDB_out = 'noremarks.pdb'
 
+try:
+    fasta_name = re.search(pattern, PDBFile).group(0)
+except AttributeError:
+    pattern=r'run_\d+'
+    fasta_name = re.search(pattern, PDBFile).group(0)
 remove_remark_lines(PDBFile, PDB_out)
 if args.chain:
     chain=args.chain

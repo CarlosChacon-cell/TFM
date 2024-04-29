@@ -3,14 +3,31 @@
 import numpy as np
 import json
 import argparse
-import pandas as pd 
+import pandas as pd
+import re 
+import glob
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--protein', help='introduce your protein name, run_X_design_X')
+parser.add_argument('--protein', type=str, help='introduce your protein name, run_X_design_X')
 args = parser.parse_args()
 
 # Specify the path to your JSON file
-file_path = f'./jsons/pae_{args.protein[5:-4]}.json'
+
+
+pattern_run = r'run_\d+'
+pattern_design = r'design_\d+'
+
+protein_run_match = re.search(pattern_run, args.protein)
+protein_design_match = re.search(pattern_design, args.protein)
+
+protein_run = protein_run_match.group() if protein_run_match else None
+protein_design = protein_design_match.group() if protein_design_match else None
+
+
+file_path = glob.glob(f'output/{protein_run}/pae*{protein_run}*{protein_design}*.json')[0]
+
 protein_name=args.protein.split('.')[0]
+
 
 
 # Open the JSON file in read mode
@@ -23,7 +40,7 @@ with open(file_path, 'r') as json_file:
 pae=data['predicted_aligned_error']
 residues=[]
 mean=[]
-residuefilename='/emdata/cchacon/TRF1/20240415_campaign_hotspotDIM_TRF1/close_residues.csv'
+residuefilename='close_residues.csv'
 
 residues_df=pd.read_csv(residuefilename, index_col=False)
 
@@ -68,17 +85,7 @@ df=pd.DataFrame({
 'interacting_surface':[interacting_surface]
 })
 
-print('\n################\n')
-print('\n################\n')
-print('local_pae_interaction: ', pae_interaction_local)
-print('\n################\n')
-print('\n################\n')
 
-print('\n################\n')
-print('\n################\n')
-print('global_pae_interaction: ', pae_interaction_global)
-print('\n################\n')
-print('\n################\n')
 file_path='pae_local_global.csv'
 # Load existing CSV file into DataFrame
 try:

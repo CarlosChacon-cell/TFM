@@ -1,8 +1,12 @@
 import pandas as pd 
 import matplotlib.pyplot as plt
 import numpy as np
+import glob
 
-df = pd.read_csv('/emdata/cchacon/TRF1/20240415_campaign_hotspotDIM_TRF1/pae_local_global.csv')
+file_path=glob.glob('pae_local_global.csv')[0]
+print(file_path)
+
+df = pd.read_csv(file_path)
 
 global_pae = df['pae_interaction_global']
 local_pae = df['pae_interaction_local']
@@ -30,13 +34,32 @@ plt.show()
 
 
 
-df2=pd.read_csv('/emdata/cchacon/TRF1/20240415_campaign_hotspotDIM_TRF1/close_residues.csv')
+# df2=pd.read_csv('/emdata/cchacon/TRF1/20240415_campaign_hotspotDIM_TRF1/close_residues.csv')
 
-length=df2['length']
-interacting_residues=df2['interacting_residues']
+# length=df2['length']
+# interacting_residues=df2['interacting_residues']
 
-interacting_surface=[]
-for i in range(len(length)):
-    interacting_surface.append(len(interacting_residues)/int(length))
+# interacting_surface=[]
+# for i in range(len(length)):
+#     interacting_surface.append(len(interacting_residues)/int(length))
+counter=0
+total=0
+differences=[]
+for i in range(len(df['protein_name'])):
+    if df['pae_interaction_local'][i] > df['pae_interaction_global'][i]:
+        differences.append(df['pae_interaction_local'][i]-df['pae_interaction_global'][i])
+        counter+=1
+        total+=1
+    else:
+        differences.append(df['pae_interaction_local'][i]-df['pae_interaction_global'][i])
+        total+=1
 
-    
+improve=100-(counter/total)*100 
+
+print('Local pae_interaction predicts an improvement for: ', improve, ' of the designs')
+print('')
+print('Local pae_interaction - global_pae_interaction: ', np.mean(differences))
+
+
+
+print('Mean interacting surface: ', np.mean(df['interacting_surface']))

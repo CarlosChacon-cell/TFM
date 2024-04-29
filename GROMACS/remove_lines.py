@@ -1,6 +1,6 @@
 import argparse
 
-def remove_lines_starting_with(file_path, prefixes):
+def remove_lines_starting_with(file_path, prefixes = ('@', '#')):
     try:
         with open(file_path, 'r') as file:
             lines = file.readlines()

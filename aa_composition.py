@@ -20,14 +20,19 @@ def calculate_aa_composition(sequence,aa_counts, total_aa):
 import matplotlib.pyplot as plt
 
 def plot_aa_composition(aa_percentages, folder):
-    labels = list(aa_percentages.keys())
-    values = list(aa_percentages.values())
+    labels = ['E','D','K','R','H','S','T','Y','N','Q','F','A','V','I','P','G','W','M']
+    #values = list(aa_percentages.values())
+    values=[]
+    for label in labels:
+        values.append(aa_percentages[label])
     title = f'Amino Acid Composition of {folder}'
 
     # Define custom colors for the bars
     colors = ['skyblue', 'lightgreen', 'lightcoral', 'orange', 'lightpink',
               'lightsalmon', 'lightblue', 'lightyellow', 'lightgrey', 'lavender']
-
+    
+    colors=['skyblue','skyblue','lightgreen','lightgreen','lightgreen','lightcoral','lightcoral','lightcoral','lightcoral','lightcoral','orange','orange','orange','orange','orange','orange','orange','orange','orange','orange','orange','orange']
+    
     plt.figure(figsize=(10, 6))
     bars = plt.bar(labels, values, color=colors, edgecolor='black', linewidth=1.5)
     plt.xlabel('Amino Acid', fontsize=12)
