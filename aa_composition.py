@@ -24,7 +24,11 @@ def plot_aa_composition(aa_percentages, folder):
     #values = list(aa_percentages.values())
     values=[]
     for label in labels:
-        values.append(aa_percentages[label])
+        try:
+            values.append(aa_percentages[label])
+        except KeyError:
+            aa_percentages[label]=0
+            values.append(0)
     title = f'Amino Acid Composition of {folder}'
 
     # Define custom colors for the bars

@@ -46,13 +46,14 @@ while [[ $i -le $max ]];do
 
     mkdir -p "run_$i" 
 
-    cp $output_silent run_${i}/$output_silentjid4=$(sbatch submit_af2_interfaces.sh --input_silent "$input_pmpnn")
+    cp $output_silent run_${i}/$output_silent
     input_pmpnn=run_${i}/$output_silent
 
     echo "running pmpnn"
     job3=$(sbatch /home/cchacon/protein_design/submit_pMPNN_bias.sh --input_silent "$input_pmpnn" --n_seqs 1 --relax_cycles 0 --bias "$output_bias")
+    wait
 
-    #jid4=$(sbatch submit_af2_interfaces.sh --input_silent "$input_pmpnn")
+    jid4=$(sbatch submit_af2_interfaces.sh --input_silent "$input_pmpnn")
     i=$((i+1))
 
 done

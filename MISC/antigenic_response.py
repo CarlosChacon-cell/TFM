@@ -52,8 +52,8 @@ def antigenic_calculator(file_path):
 
     with open (file_path, 'r') as file:
         for line in file:
-            if line.startswith('<'):
-                protein_name=line.strip('<')
+            if line.startswith('>'):
+                protein_name=line.strip('>')
                 continue
             else:
                 sequence=line
@@ -97,16 +97,24 @@ def antigenic_calculator(file_path):
     plt.ylabel('Residue number-3')
     plt.hlines(y=protein_mean_antigenic, xmin=0, xmax=len(sequence)-3, color='r', label = 'Mean antigenic value')
     plt.legend()
-    plt.show()
+    # plt.show()
+    return protein_name, protein_mean_antigenic
 
 
 if __name__ == '__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--folder', '-f', help='Folder in which the fasta are stored')
     args=parser.parse_args()
-
-    file_list= glob.glob(args.folder)
+    antigenic_dict={
+        'protein_name':[],
+        'mean_antigenic':[]
+    }
+    file_list= glob.glob(f'{args.folder}/*fasta')
     for file_path in file_list:
-        antigenic_calculator(file_path)
+        protein_name, mean_antigenic = antigenic_calculator(file_path)
+        antigenic_dict['protein_name'].append(protein_name.strip())
+        antigenic_dict['mean_antigenic'].append(mean_antigenic)
+    df=pd.DataFrame(antigenic_dict)
+    df.to_csv('antigenic_values.csv', index=False)
     
 

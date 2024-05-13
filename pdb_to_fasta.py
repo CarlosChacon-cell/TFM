@@ -30,8 +30,7 @@ PDB_out = 'noremarks.pdb'
 try:
     fasta_name = re.search(pattern, PDBFile).group(0)
 except AttributeError:
-    pattern=r'run_\d+'
-    fasta_name = re.search(pattern, PDBFile).group(0)
+    fasta_name = PDBFile[:-4]
 remove_remark_lines(PDBFile, PDB_out)
 if args.chain:
     chain=args.chain
