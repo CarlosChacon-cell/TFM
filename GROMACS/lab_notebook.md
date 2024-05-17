@@ -127,7 +127,7 @@ After reading this [webpage](https://pubs.acs.org/doi/full/10.1021/acs.chemrev.9
 
 Doing that, I obtain the following result when plotting pae_interaction_global vs BindingEnergy:
 
-![alt text](figures/DeltaVsPae.png)
+![alt text](figures/DeltavsPAe_micropeptides.png)
 
 If we remove the outlier run_21:
 
@@ -138,3 +138,21 @@ And using pae_interaction_local:
 ![alt text](figures/DeltaVsPae_local.png)
 
 Clearly pae_local seems to perform better, but further studies should be done. The sample is pretty small and there are some strange things happening with the pae_interaction_global data (no termina de dar los mismos resultados)
+
+I repeat these studies with the scaffolding of the binder of the myb domain  at /emdata/cchacon/TRF1/20240418_Scaffolding_myb_2/hits because they clearly improve with the pae_interaction_local, but the results are pretty bad: Not only pae_interaction_local doesn't improve the binding prediction, but pae_interaction-delta correlation is awful
+
+![alt text](figures/DeltaVsPae.png)
+
+And using pae_interaction_local:
+
+![alt text](figures/deltavspae_local.png)
+
+Maybe one possible explanation is that since these are scaffolds that have been grown, the interacting interface is always the same and the smlal differences cannot be captured by the local_pae but probably the problem is the absence of correlation
+
+The results are also pretty bad with different binders so we can say that there is no clear correlation between the deltaG and the pae_interaction_local
+
+![alt text](figures/DeltaVsPae_dim.png)
+
+And using pae_interaction_local:
+
+![alt text](figures/DeltavsPAe_locla_dim.png.png)

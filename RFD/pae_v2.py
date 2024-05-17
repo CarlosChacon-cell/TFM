@@ -12,24 +12,26 @@ parser.add_argument('--protein', type=str, help='introduce your protein name, ru
 args = parser.parse_args()
 
 # Specify the path to your JSON file
+pattern_run = r'run_\d+'
+pattern_design = r'design_\d+'
+
+protein_run_match = re.search(pattern_run, args.protein)
+protein_design_match = re.search(pattern_design, args.protein)
+
+protein_run = protein_run_match.group() if protein_run_match else None
+protein_design = protein_design_match.group() if protein_design_match else None
+
 
 try:
-    pattern_run = r'run_\d+'
-    pattern_design = r'design_\d+'
-
-    protein_run_match = re.search(pattern_run, args.protein)
-    protein_design_match = re.search(pattern_design, args.protein)
-
-    protein_run = protein_run_match.group() if protein_run_match else None
-    protein_design = protein_design_match.group() if protein_design_match else None
-
-
-    file_path = glob.glob(f'output/{protein_run}/pae*{protein_run}*{protein_design}*.json')[0]
-
+    file_path = glob.glob(f'../output/{protein_run}/pae*{protein_run}*{protein_design}*.json')[0]
     protein_name=args.protein.split('.')[0]
-except:
-    protein_name=args.protein.split('.')[0]
-    file_path=glob.glob('*json')[0]
+except IndexError:
+    try:
+        protein_name=args.protein.split('.')[0]
+        file_path=glob.glob(f'../output/{protein_run}/pae_{protein_run}_{protein_design}*json')[0]
+    except:
+        protein_name=args.protein.split('.')[0]
+        file_path=glob.glob(f'../jsons/pae_{protein_run}_{protein_design}*json')[0]
 
 
 
