@@ -140,7 +140,7 @@ def write_yaml_content(yaml_content, filename, numb_args):
         for item in yaml_content['defaults']:
             yaml_string += "- base_cluster\n"
             yaml_string += 'job_name: "{}"\n'.format(item['job_name'])
-            yaml_string += "    protein_inputs:\n"
+            yaml_string += "protein_inputs:\n"
             yaml_string += "      A:\n"
             yaml_string += "        fasta_file: ../{}\n".format(item['protein_inputs']['A']['fasta_file'])
             yaml_string += "      B:\n"
