@@ -3,13 +3,7 @@
 import os 
 import argparse
 import re 
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--fasta', help='protein fasta file path', required=False)
-parser.add_argument('--pdb', help='protein pdb file path', required=False)
-parser.add_argument('--comp', help='comp file path', required=True)
-parser.add_argument('--folder', help='folder in which you want to save the yaml_file ', required=True)
-args = parser.parse_args()
+import yaml
 
 
 def pdb_to_fasta(pdb_file):
@@ -26,6 +20,42 @@ def pdb_to_fasta(pdb_file):
                         
     return sequence
 
+# def create_yaml_content(fasta_files, comp_file,comp_name):
+#     # Generate protein_inputs dictionary based on fasta files
+#     protein_inputs = {}
+#     if len(fasta_files)==2:
+#         protein_inputs= {
+#             'A': {
+#                 'fasta_file':f'../{fasta_files[0]}'
+#             },
+#             'B': {
+#                 'fasta_file':f'../{fasta_files[1]}'
+#             }
+#         }
+#     else:
+#         protein_inputs= {
+#            'A': {
+#                 'fasta_file':f'../{fasta_files[0]}'
+#             }                      
+#             }
+    
+#     # Hardcoded sm_inputs dictionary
+
+#     sm_inputs = {
+#         'C': {
+#             'input': f'../{comp_file}',
+#             'input_type': "\"sdf\""
+#         }
+#     }
+    
+#     # YAML structure
+#     yaml_content = {
+#         'defaults': ['base_cluster'],
+#         'job_name': f'"{comp_name}"',
+#         'protein_inputs': protein_inputs,
+#         'sm_inputs': sm_inputs
+#     }
+#     return yaml_content
 
 def get_file_type(file_path):
     _, file_extension = os.path.splitext(file_path)
@@ -38,56 +68,115 @@ def get_file_name(file_path):
 
 
 
+# if args.fasta:
+#     filename=(f'{args.folder}/input.yaml')
+#     yaml_content = create_yaml_content(args.fasta, comp_path, comp_name)
+#     with open(filename, 'w') as yaml_file:
+#         yaml.dump(yaml_content, yaml_file, default_flow_style=False)
 
-comp_path = args.comp
-comptype = get_file_type(comp_path)
-comp_name = get_file_name(comp_path)
+# # Read YAML data
+# with open(filename, 'r') as file:
+#     data = yaml.safe_load(file)
 
+# print(data['job_name'])
+# # Modify fields
 
-if args.fasta:
-    with open(f'{args.protein}', 'r') as fastafile:
-        content = fastafile.read()
-        # Split the content into lines
-        lines = content.split('\n')
-        # Iterate through the lines to find the protein name
-        for line in lines:
-            if line.startswith('>'):
-                # Extract the protein name (assuming it's everything after '>')
-                protein_name = line[1:].strip()
-                break 
-    filename=(f'{args.folder}/{protein_name}_{comp_name}')
-    with open(filename, 'w') as file:
-        file.write('defaults:\n'
-                +'  '+'- base\n'
-                + '\n'
-                + '  ' + 'A:\n'
-                + '\t'+f'fasta_file: {args.fasta}\n'
-                + '\n'
-                + 'sm_inputs:\n'
-                + '  ' + 'B:\n'
-                + '\t' + f'input: {args.comp}\n'
-                + '\t' + f'input_type: \"{comptype}\"')
-                
-if args.pdb:
-    fasta_sequence=pdb_to_fasta(args.pdb)
-    protein_name=get_file_name(args.pdb)
-    fasta_name = f'fasta/{protein_name}.fasta'
-    with open(fasta_name, 'w') as fasta:
-        fasta.write(f'>{protein_name}\n' + 
-                   fasta_sequence)
-        
-    filename=(f'{args.folder}/{protein_name}_{comp_name}.yaml')
+# data['job_name'] = data["job_name"].strip("'")
+# data['sm_inputs']['C']['input_type']=data['sm_inputs']['C']['input_type'].strip('')
 
-    with open(filename, 'w') as file:
-        file.write('defaults:\n'
-                +'  '+'- base\n'
-                + '\n'
-                + '  ' + 'A:\n'
-                + '\t'+f'fasta_file: {fasta_name}\n'
-                + '\n'
-                + 'sm_inputs:\n'
-                + '  ' + 'B:\n'
-                + '\t' + f'input: {args.comp}\n'
-                + '\t' + f'input_type: \"{comptype}\"')
+# # Write modified YAML data
+# with open(filename, 'w') as file:
+#     yaml.dump(data, file)
 
 
+def create_yaml_content(fasta_files, comp_path, comp_name):
+    # Define the content structure
+    if len(fasta_files)==2:
+        defaults = [
+            {
+                'base_cluster': None,
+                'job_name': comp_name,
+                'protein_inputs': {
+                    'A': {
+                        'fasta_file': fasta_files[0]
+                    },
+                    'B': {
+                        'fasta_file': fasta_files[1]
+                    }
+                },
+                'sm_inputs': {
+                    'C': {
+                        'input': comp_path,
+                        'input_type': "sdf"  # Remove single quotes, just in case
+                    }
+                }
+            }
+        ]
+    elif len(fasta_files)==1:
+        defaults = [
+            {
+                'base_cluster': '',
+                'job_name': comp_name,
+                'protein_inputs': {
+                    'A': {
+                        'fasta_file': fasta_files[0]
+                    }
+                },
+                'sm_inputs': {
+                    'C': {
+                        'input': comp_path,
+                        'input_type': "sdf"  # Remove single quotes, just in case
+                    }
+                }
+            }
+        ]
+
+    return {'defaults': defaults}
+
+def write_yaml_content(yaml_content, filename, numb_args):
+    # Create YAML formatted string manually
+    yaml_string = "defaults:\n"
+    if numb_args==2:
+        for item in yaml_content['defaults']:
+            yaml_string += "- base_cluster\n"
+            yaml_string += 'job_name: "{}"\n'.format(item['job_name'])
+            yaml_string += "    protein_inputs:\n"
+            yaml_string += "      A:\n"
+            yaml_string += "        fasta_file: ../{}\n".format(item['protein_inputs']['A']['fasta_file'])
+            yaml_string += "      B:\n"
+            yaml_string += "        fasta_file: ../{}\n".format(item['protein_inputs']['B']['fasta_file'])
+            yaml_string += "sm_inputs:\n"
+            yaml_string += "      C:\n"
+            yaml_string += "        input: ../{}\n".format(item['sm_inputs']['C']['input'])
+            yaml_string += '        input_type: \"{}\"\n'.format(item['sm_inputs']['C']['input_type'])
+    elif numb_args==1:
+          for item in yaml_content['defaults']:
+            yaml_string += "- base_cluster\n"
+            yaml_string += 'job_name: "{}"\n'.format(item['job_name'])
+            yaml_string += "protein_inputs:\n"
+            yaml_string += "      A:\n"
+            yaml_string += "        fasta_file: ../{}\n".format(item['protein_inputs']['A']['fasta_file'])
+            yaml_string += "sm_inputs:\n"
+            yaml_string += "      B:\n"
+            yaml_string += "        input: ../{}\n".format(item['sm_inputs']['C']['input'])
+            yaml_string += '        input_type: \"{}\"\n'.format(item['sm_inputs']['C']['input_type'])      
+    # Write the manually created YAML string to the file
+    with open(filename, 'w') as yaml_file:
+        yaml_file.write(yaml_string)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fasta', help='protein fasta file path', required=False, nargs='+')
+    parser.add_argument('--pdb', help='protein pdb file path', required=False)
+    parser.add_argument('--comp', help='comp file path', required=True)
+    parser.add_argument('--folder', help='folder in which you want to save the yaml_file ', required=True)
+    args = parser.parse_args()
+
+    comp_path = args.comp
+    comptype = get_file_type(comp_path)
+    comp_name = get_file_name(comp_path)
+    numb_args=len(args.fasta)
+    if args.fasta:
+        filename = f'{args.folder}/input.yaml'
+        yaml_content = create_yaml_content(args.fasta, args.comp, comp_name)
+        write_yaml_content(yaml_content, filename,numb_args)
