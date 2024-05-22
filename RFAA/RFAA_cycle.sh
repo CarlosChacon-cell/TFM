@@ -1,5 +1,5 @@
 
-max=10
+max=20
 counter=0
 for folder in ZINC* do 
     while [ $counter -le $max ]; do
