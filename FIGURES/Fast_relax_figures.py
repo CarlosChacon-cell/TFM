@@ -36,7 +36,7 @@ plt.ylabel('pLDDT Binder')
 # Highlight specific region with a square
 rect = patches.Rectangle((0, 80), 10, 10, linewidth=2, edgecolor='black', facecolor='none')
 plt.gca().add_patch(rect)
-plt.text(3, 82, 'Hits Zone', color='black', fontsize=12)
+plt.text(4, 81, 'Hits Zone', color='black', fontsize=12)
 # Invert the x-axis
 plt.gca().invert_xaxis()
 
@@ -62,7 +62,7 @@ percentage_noFR=positives_noFR/(positives_noFR+negatives_noFR)
 # Prepare data for plotting
 data = {'Campaign': ['Fast Relax', 'No Fast Relax'], 'Percentage': [percentage_FR, percentage_noFR]}
 
-# Create a DataFrame
+# Create a DataFramea
 df_plot = pd.DataFrame(data)
 
 # Set the style
@@ -92,4 +92,4 @@ plt.gca().text(0.02, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
 plt.title('Fast Relax vs No Fast Relax success rates')
 plt.ylabel('Hits success rate')
 # Show the plot
-plt.show()
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
