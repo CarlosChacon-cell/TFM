@@ -4,25 +4,23 @@ import pymol
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--protein', '-pt', help='protein file path', required=True)
+parser.add_argument('--length', '-l', help='The length of the protein', type=int)
 args = parser.parse_args()
-protein_name = args.protein.split('.')[0]
+protein_name=args.protein.split('/')[0]
+try:
+    protein_name=protein_name.split('.')[0]
+except:
+    protein_name=protein_name
+
+
 
 
 pymol.finish_launching()
 cmd.load(args.protein)
 
-# First compute the length
-cmd.select('sele, chain A')
-cmd.select('sele, br. sele')
-all_sel = 'sele'
-all_set = set()
-cmd.iterate(all_sel, 'all_set.add(resv)')
-
-length = len(all_set)
-
 # Select interacting residues
 cmd.delete('sele')
-cmd.select('sele, chain A w. 4 of chain B')
+cmd.select(f'sele, resi 1-{args.length} w. 4 of resn LG1')
 cmd.select('sele, br. sele')
 residues_sel = 'sele'
 
@@ -31,7 +29,7 @@ cmd.iterate(residues_sel, 'res_set.add(resv)')
 
 #compute interacting surface
 
-interacting_surface=len(res_set)/length*100
+interacting_surface=len(res_set)/args.length*100
 
 # Save data to CSV
 filename = f'close_residues.csv'
@@ -41,13 +39,13 @@ if file_exists:
     with open(filename, 'a') as file:
         # Convert the list of residues to a whitespace-separated string representation
         res_str = ' '.join(map(str, list(res_set)))
-        file.write(f'{protein_name},{length},{interacting_surface},{res_str}\n')
+        file.write(f'{protein_name},{args.length},{interacting_surface},{res_str}\n')
 else:
     with open(filename, 'w') as file:
         # Write column headers
-        file.write('protein_name,length,interacting_surface,interacting_residues\n')
+        file.write('compound_name,length,interacting_surface,interacting_residues\n')
         # Convert the list of residues to a whitespace-separated string representation
         res_str = ' '.join(map(str, list(res_set)))
-        file.write(f'{protein_name},{length},{interacting_surface},{res_str},\n')
+        file.write(f'{protein_name},{args.length},{interacting_surface},{res_str},\n')
 
 pymol.cmd.quit()

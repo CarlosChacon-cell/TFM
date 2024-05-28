@@ -6,14 +6,17 @@ from sklearn.linear_model import LinearRegression
 # Load data from CSV files
 rmsd_df = pd.read_csv('rmsd.csv', header=0)
 alignment_df = pd.read_csv('pairwise_alignment.csv', header=0)
-metrics_df=pd.read_csv('../hits.csv', header=0)
+metrics_df=pd.read_csv('../output_af2.csv', header=0)
+metrics_df=metrics_df[(metrics_df['pae_interaction'] < 10) & (metrics_df['plddt_binder'] > 80) ]
 
 
 # Merge DataFrames on 'query' column
-merged_df_1 = pd.merge(rmsd_df, alignment_df, on='query')
-merged_df=pd.merge(merged_df_1, metrics_df, on='query')
-filtered_df = merged_df[merged_df['Global RMSD'] != 0]
-
+merged_df_1 = pd.merge(rmsd_df, alignment_df, on='query', how='inner')
+metrics_df=metrics_df.rename(columns={'description':'query'}) 
+merged_df=pd.merge(merged_df_1, metrics_df, on='query', how='inner')
+print(merged_df)
+filtered_df = merged_df[(merged_df['Global RMSD'] > 0) & (merged_df['Global RMSD'] < 4)]
+filtered_df.to_csv('RMSD_alignment_metrics.csv')
 # Create a scatter plot
 plt.figure(figsize=(10, 6))  # Set figure size
 
