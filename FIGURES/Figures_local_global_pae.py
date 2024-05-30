@@ -7,11 +7,14 @@ from scipy.stats import linregress
 from scipy.stats import ttest_ind
 from statannotations.Annotator import Annotator
 # Load the CSV file
-file_path = glob.glob('pae_local_global.csv')[0]
-print(file_path)
+file_path = glob.glob('/emdata/cchacon/Scaffolding/campaign_run_9_again/hits/pdbs/pae_local_global.csv')[0]
 
 df = pd.read_csv(file_path)
+df_af2=pd.read_csv('/emdata/cchacon/Scaffolding/campaign_run_9_again/hits.csv', header=0)
+df_plddt=df_af2[[ 'plddt_binder','description']]
+df_plddt.columns=['plddt_binder', 'protein_name']
 
+df=pd.merge(df,df_plddt, how='inner', on='protein_name')
 # Extract global and local PAE interactions
 global_pae = df['pae_interaction_global']
 local_pae = df['pae_interaction_local']
@@ -62,6 +65,24 @@ plt.axhline(y=10, color='blue', linestyle='--', label='CUTRE threshold')
 plt.legend()
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Figure_CUTREvsPaeInteraction.png')
 
+plt.figure(figsize=(10,12))
+no_hit_df=df[(df['pae_interaction_global'] > 20)]
+hit_df=df[(df['pae_interaction_global'] < 20)]
+print(no_hit_df)
+sns.scatterplot(data=no_hit_df, x='pae_interaction_global', y='plddt_binder', color='green', s=100, alpha=0.3)
+sns.scatterplot(data=hit_df, x='pae_interaction_global', y='plddt_binder', hue='protein_name', s=100)
+sns.scatterplot(data=no_hit_df, x='pae_interaction_local', y='plddt_binder', color='blue', s=100, alpha=0.3, marker='s')
+sns.scatterplot(data=hit_df, x='pae_interaction_local', y='plddt_binder', hue='protein_name', s=100, marker='s')
+plt.xlabel('pae_interaction')
+plt.ylabel('plddt_binder')
+plt.gca().invert_xaxis()
+plt.axvline(x=10, color='k', linestyle='-')
+plt.axhline(y=80, color='k', linestyle='-')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/scatterplot_local_vs_global')
+
+
+
+
 plt.figure(figsize=(10,14))
 
 
@@ -89,7 +110,7 @@ annotator.configure(
     
 annotator.apply_and_annotate()
 # sns.scatterplot(data=df, x='interacting_surface', y='Improvement', hue='pae_interaction_global', s=100)
-plt.show()
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_interactingSurface_Improvement_cutre.png')
 # subset_0=df['Improvement'][df['interaction_group']==0]
 # subset_10=df['Improvement'][df['interaction_group']==10]
 # subset_20=df['Improvement'][df['interaction_group']==20]
