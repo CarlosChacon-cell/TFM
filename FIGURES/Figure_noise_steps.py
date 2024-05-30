@@ -45,6 +45,62 @@ plt.legend(title='Regression Line')
 plt.grid(True)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRMSD.png')
 
+plt.figure(figsize=(8,10))
+boxplot=sns.boxplot(data=df_filtered, x='Noise', y='RMSD', palette='viridis')
+annotator=Annotator(
+    boxplot,
+    data=df_filtered,
+    x='Noise',
+    y='RMSD',
+    pairs=[
+        (5,10),(5,20),(5,30),
+        (10,20),(10,30),
+        (20,30)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('RMSD vs Noise Steps')
+plt.ylabel(f'RMSD ($\AA$)')
+plt.xlabel('Noise Steps(#)')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_rmsd_noisesteps.png')
+
+#df_filter hits
+df_hits=df_filtered[(df_filtered['pae_interaction'] < 10) & (df_filtered['plddt_binder']>80)]
+#A boxplot in case it is interesting 
+plt.figure(figsize=(10,12))
+boxplot=sns.boxplot(data=df_hits, x='Noise', y='pae_interaction', palette='viridis')
+annotator=Annotator(
+    boxplot,
+    data=df_hits,
+    x='Noise',
+    y='pae_interaction',
+    pairs=[
+        (5,10),(5,20),(5,30),
+        (10,20),(10,30),
+        (20,30)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('Noise Steps vs Pae_interaction')
+plt.xlabel('Noise Steps (#)')
+plt.ylabel(f'Pae_interaction ($\AA$)')
+
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_pae_interaction_noise_steps.png')
+
+
+
 
 # Load the dataset
 df = pd.read_csv('/emdata/cchacon/20240522_run_264_noise_steps/output_af2.csv')
@@ -97,26 +153,3 @@ plt.grid(True)
 # Show the plot
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRun264Figure.png')
 
-
-#A boxplot in case it is interesting 
-plt.figure(figsize=(10,12))
-boxplot=sns.boxplot(data=df_filtered, x='Noise', y='pae_interaction')
-annotator=Annotator(
-    boxplot,
-    data=df_filtered,
-    x='Noise',
-    y='pae_interaction',
-    pairs=[
-        (5,10),(5,20),(5,30),
-        (10,20),(10,30),
-        (20,30)
-    ]
-)
-annotator.configure(
-    test='t-test_ind',
-    text_format='star',
-    loc='inside',
-    comparisons_correction="bonferroni")
-    
-annotator.apply_and_annotate()
-plt.show()

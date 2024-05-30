@@ -73,6 +73,34 @@ plt.ylabel(f'RMSD ($\AA$)')
 plt.xlabel('Noise Scale (Arb.U)')
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_rmsd_noisescale.png')
 
+#df_filter hits
+df_hits=df_filtered_112[(df_filtered_112['pae_interaction'] < 10) & (df_filtered_112['plddt_binder']>80)]
+#A boxplot in case it is interesting 
+plt.figure(figsize=(10,12))
+boxplot=sns.boxplot(data=df_hits, x='Noise', y='pae_interaction', palette='viridis')
+annotator=Annotator(
+    boxplot,
+    data=df_hits,
+    x='Noise',
+    y='pae_interaction',
+    pairs=[
+        (0.05,0.10),(0.05,0.5),(0.05,1),
+        (0.1,0.5),(0.1,1),
+        (0.5,1)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('Noise Scale vs Pae_interaction')
+plt.xlabel('Noise Scale (Arb.Units)')
+plt.ylabel(f'Pae_interaction ($\AA$)')
+
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_pae_interaction_noise_scale.png')
 
 
 
