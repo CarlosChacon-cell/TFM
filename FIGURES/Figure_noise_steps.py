@@ -4,6 +4,7 @@ import seaborn as sns
 import numpy as np
 import matplotlib.patches as patches
 import scipy
+from statannotations.Annotator import Annotator
 
 # Load data
 df = pd.read_csv('/emdata/cchacon/RFD_PD_test/pdbs/rmsd_noise_steps.csv')
@@ -95,3 +96,27 @@ plt.grid(True)
 
 # Show the plot
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRun264Figure.png')
+
+
+#A boxplot in case it is interesting 
+plt.figure(figsize=(10,12))
+boxplot=sns.boxplot(data=df_filtered, x='Noise', y='pae_interaction')
+annotator=Annotator(
+    boxplot,
+    data=df_filtered,
+    x='Noise',
+    y='pae_interaction',
+    pairs=[
+        (5,10),(5,20),(5,30),
+        (10,20),(10,30),
+        (20,30)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.show()

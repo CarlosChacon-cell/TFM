@@ -4,14 +4,13 @@ import seaborn as sns
 import numpy as np
 import scipy
 import matplotlib.patches as patches
-
+from statannotations.Annotator import Annotator
 # Load data
 df = pd.read_csv('/emdata/cchacon/partial_diff_noise_scale_test/rmsd_noise_scale.csv')
 print(df)
 # Prepare data for plotting
 df_filtered_112 = df[df['campaign'].str.contains('run_112_noise_scale')]
 df_filtered_112['Noise'] = df_filtered_112['campaign'].str.extract('run_112_noise_scale_(\d+)').astype(str)
-print(df_filtered_112)
 df_filtered_112.loc[df_filtered_112['Noise'] == '005', 'Noise'] = 0.05
 df_filtered_112.loc[df_filtered_112['Noise'] == '01', 'Noise'] = 0.1
 df_filtered_112.loc[df_filtered_112['Noise'] == '05', 'Noise'] = 0.5
@@ -48,6 +47,33 @@ plt.ylabel('RMSD', fontsize=14)
 plt.legend(title='Regression Line', loc='lower right')
 plt.grid(True)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Noise_Scale_RMSD.png')
+
+plt.figure(figsize=(8,10))
+boxplot=sns.boxplot(data=df_filtered_112, x='Noise', y='RMSD', palette='viridis')
+annotator=Annotator(
+    boxplot,
+    data=df_filtered_112,
+    x='Noise',
+    y='RMSD',
+    pairs=[
+        (0.05,0.1),(0.05,0.5),(0.05,1),
+        (0.1,0.5),(0.1,1),
+        (0.5,1)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('RMSD vs Noise Scale')
+plt.ylabel(f'RMSD ($\AA$)')
+plt.xlabel('Noise Scale (Arb.U)')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_rmsd_noisescale.png')
+
+
 
 
 #Figure for run_264

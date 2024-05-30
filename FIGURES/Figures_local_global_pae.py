@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import glob
 import seaborn as sns 
-
+from scipy.stats import linregress
+from scipy.stats import ttest_ind
+from statannotations.Annotator import Annotator
 # Load the CSV file
 file_path = glob.glob('pae_local_global.csv')[0]
 print(file_path)
@@ -46,6 +48,13 @@ plt.title('Global PAE Interaction vs Local PAE Interaction')
 plt.grid(True)
 plt.xlim((0, 30))
 plt.ylim((0, 30))
+sns.regplot(data=df, y='pae_interaction_local', x='pae_interaction_global', scatter=False, color='black', line_kws={'label': 'Linear fit'})
+
+#R square
+slope, intercept, r_value, p_value, std_err = linregress(global_pae, local_pae)
+r_squared = r_value**2
+print(f'R-squared: {r_squared:.2f}')
+
 
 # Add vertical and horizontal lines
 plt.axvline(x=10, color='red', linestyle='--', label='Global threshold')
@@ -53,7 +62,91 @@ plt.axhline(y=10, color='blue', linestyle='--', label='CUTRE threshold')
 plt.legend()
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Figure_CUTREvsPaeInteraction.png')
 
-plt.figure(figsize=(10,8))
+plt.figure(figsize=(10,14))
+
+
+#Create the new variables for plotting
 df['Improvement']=df['pae_interaction_global']-df['pae_interaction_local']
-sns.scatterplot(data=df, x='interacting_surface', y='Improvement', hue='pae_interaction_global', s=100)
+df['interaction_group']=df['interacting_surface'].round(-1)
+boxplot=sns.boxplot(data=df, x=df['interaction_group'], y='Improvement')
+annotator=Annotator(
+    boxplot,
+    data=df,
+    x='interaction_group',
+    y='Improvement',
+    pairs=[
+        (0,10),(0,20),(0,30),(0,40),
+        (10,20),(10,30),(10,40),
+        (20,30),(20,40),
+        (30,40)
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+# sns.scatterplot(data=df, x='interacting_surface', y='Improvement', hue='pae_interaction_global', s=100)
 plt.show()
+# subset_0=df['Improvement'][df['interaction_group']==0]
+# subset_10=df['Improvement'][df['interaction_group']==10]
+# subset_20=df['Improvement'][df['interaction_group']==20]
+# subset_30=df['Improvement'][df['interaction_group']==30]
+# subset_40=df['Improvement'][df['interaction_group']==40]
+
+# bonferroni_correction=0.05/10
+# t_stat, p_value = ttest_ind(subset_0, subset_10, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('The difference between 0 and 10 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_0, subset_20, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 0 and 20 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_0, subset_30, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference is 0 and 30 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_0, subset_40, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference 0 and 40 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_10, subset_20, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 10 and 20 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_10, subset_30, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 10 amd 30 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_10, subset_40, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 10 amd 40 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_20, subset_30, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 20 amd 30 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_20, subset_40, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 20 amd 40 is significant\n')
+#     print('#########\n')
+# t_stat, p_value = ttest_ind(subset_40, subset_30, equal_var=False)
+# if p_value < bonferroni_correction:
+#     print('########\n')
+#     print('This difference between 40 and 30 is significant\n')
+#     print('#########\n')
+
+
+
