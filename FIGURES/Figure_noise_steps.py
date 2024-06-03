@@ -5,26 +5,13 @@ import numpy as np
 import matplotlib.patches as patches
 import scipy
 from statannotations.Annotator import Annotator
-
+from scipy.stats import ks_2samp
 # Load data
 df = pd.read_csv('/emdata/cchacon/RFD_PD_test/pdbs/rmsd_noise_steps.csv')
 
 # Prepare data for plotting
 df_filtered = df[df['campaign'].str.contains('campaign_run_112_ns')]
 df_filtered['Noise'] = df_filtered['campaign'].str.extract('campaign_run_112_ns(\d+)').astype(int)
-
-# Initialize the plot
-plt.figure(figsize=(10, 8))
-
-# Plot with seaborn
-sns.scatterplot(data=df_filtered, x='Noise', y='RMSD', hue='Noise', palette='viridis', s=100)
-
-# Prepare data for regression with all the points
-# X = df_filtered['Noise'].tolist()
-# y = df_filtered['RMSD'].tolist()
-# slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(X, y)
-# r_squared = r_value ** 2
-# y_pred = [intercept + slope * value for value in X]
 
 X=[5,10,20,30]
 y=[]
@@ -34,21 +21,25 @@ for noise in df_filtered['Noise'].unique():
 slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(X, y)
 y_pred = [intercept + slope * value for value in X]
 
-# Plot the regression line
-sns.lineplot(x=X, y=y_pred, label=f'$r$={r_value:.2f}', color='red')
+# Initialize the plot
 
-# Add title and labels
-plt.title('RMSD vs. Noise Levels with Linear Fits and $R^2$ Values', fontsize=16)
-plt.xlabel('Noise Level', fontsize=14)
-plt.ylabel('RMSD', fontsize=14)
-plt.legend(title='Regression Line')
-plt.grid(True)
+plt.figure(figsize=(12,10))
+sns.set_theme(style='whitegrid')
+sns.pointplot(data=df_filtered, x='Noise', y='RMSD', hue= 'Noise', palette='crest', s=100,capsize=0.2, ci=95)
+
+
+# Plot the regression line
+# sns.lineplot(x=X, y=y_pred, label=f'$r$={r_value:.2f}', color='red', ax=ax) ##Doesn't work##
+plt.title('RMSD vs Noise Steps')
+plt.xlabel('Noise Steps (#)')
+plt.ylabel(f'RMSD ($\AA$)')
+plt.legend(title='Noise Steps')
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRMSD.png')
 
 plt.figure(figsize=(8,10))
-boxplot=sns.boxplot(data=df_filtered, x='Noise', y='RMSD', palette='viridis')
+violinplot=sns.violinplot(data=df_filtered, x='Noise', y='RMSD', palette='viridis')
 annotator=Annotator(
-    boxplot,
+    violinplot,
     data=df_filtered,
     x='Noise',
     y='RMSD',
@@ -68,15 +59,18 @@ annotator.apply_and_annotate()
 plt.title('RMSD vs Noise Steps')
 plt.ylabel(f'RMSD ($\AA$)')
 plt.xlabel('Noise Steps(#)')
-plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_rmsd_noisesteps.png')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_noisesteps.png')
 
 #df_filter hits
 df_hits=df_filtered[(df_filtered['pae_interaction'] < 10) & (df_filtered['plddt_binder']>80)]
-#A boxplot in case it is interesting 
+d_stat,p_value=ks_2samp(df_hits['RMSD'][df_hits['Noise']==10], df_hits['RMSD'][df_hits['Noise']==5])
+print('PVALUE BY KS IS: ',  p_value)
+
+#A violinplot in case it is interesting 
 plt.figure(figsize=(10,12))
-boxplot=sns.boxplot(data=df_hits, x='Noise', y='pae_interaction', palette='viridis')
+violinplot=sns.violinplot(data=df_hits, x='Noise', y='pae_interaction', palette='viridis')
 annotator=Annotator(
-    boxplot,
+    violinplot,
     data=df_hits,
     x='Noise',
     y='pae_interaction',
@@ -97,10 +91,7 @@ plt.title('Noise Steps vs Pae_interaction')
 plt.xlabel('Noise Steps (#)')
 plt.ylabel(f'Pae_interaction ($\AA$)')
 
-plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_pae_interaction_noise_steps.png')
-
-
-
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noise_steps.png')
 
 # Load the dataset
 df = pd.read_csv('/emdata/cchacon/20240522_run_264_noise_steps/output_af2.csv')
@@ -126,14 +117,11 @@ sns.set(style="whitegrid")
 
 # Create a scatter plot
 plt.figure(figsize=(10, 8))
-plt.scatter(df_5ns['pae_interaction'], df_5ns['plddt_binder'], color='blue', label='5 Noise Steps')
-plt.scatter(df_10ns['pae_interaction'], df_10ns['plddt_binder'], color='purple', label='10 Noise Steps')
-plt.scatter(df_20ns['pae_interaction'], df_20ns['plddt_binder'], color='orange', label='20 Noise Steps')
-plt.scatter(df_30ns['pae_interaction'], df_30ns['plddt_binder'], color='green', label='30 Noise Steps')
-plt.scatter(df_original['pae_interaction'], df_original['plddt_binder'], color='red', s=100, label='Original', edgecolors='black')
+sns.scatterplot(data=df_filtered, x='plddt_binder', y='pae_interaction', hue='Noise', s=100, palette='crest')
+sns.scatterplot(data=df_original, x='plddt_binder', y='pae_interaction', color='red', s=100, label='Original')
 
 # Add titles and labels
-plt.title('PAE Interaction vs. pLDDT Binder')
+plt.title('PAE Interaction vs. pLDDT Binder run_264')
 plt.xlabel('PAE Interaction')
 plt.ylabel('pLDDT Binder')
 
@@ -145,7 +133,7 @@ plt.text(4, 81, 'Hits Zone', color='black', fontsize=12)
 plt.gca().invert_xaxis()
 
 # Add legend
-plt.legend()
+plt.legend(title='Noise Steps')
 
 # Add grid
 plt.grid(True)

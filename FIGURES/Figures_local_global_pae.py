@@ -44,7 +44,7 @@ print('Mean interacting surface: ', np.mean(df['interacting_surface']))
 plt.figure(figsize=(10, 8))
 
 # Plot with seaborn
-sns.scatterplot(data=df, y='pae_interaction_local', x='pae_interaction_global', hue='interacting_surface', palette='viridis', s=100)
+sns.scatterplot(data=df, y='pae_interaction_local', x='pae_interaction_global', hue='interacting_surface', palette='crest', s=100)
 plt.xlabel('Global PAE Interaction')
 plt.ylabel('Local PAE Interaction')
 plt.title('Global PAE Interaction vs Local PAE Interaction')

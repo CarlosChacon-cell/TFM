@@ -20,14 +20,13 @@ for folder in *loop; do
     #Create NPT equilibration file
     gmx grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
     wait 
-
     #run NPT equilibration 
     gmx mdrun -v -deffnm npt
     wait
     #create run files for a 10ns run
-    gmx grompp -f run.mdp  -c npt.gro -t npt.cpt -p topol.top -o run20ns.tpr
+    gmx grompp -f run.mdp  -c npt.gro -t npt.cpt -p topol.top -o run50ns.tpr
     wait 
-    sbatch gromacs_submit_cluster_tests.sh "run20ns.tpr" "0"
+    sbatch gromacs_submit_cluster_tests.sh "run50ns.tpr" "0"
     cd ..
 done
 
