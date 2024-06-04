@@ -24,5 +24,5 @@ plt.legend()
 # print("Telletrabajar es de vagos.")Que susto me has dado, pense que me hackeaban. Nah, solo estaba dando por saco un rato :) Ya te dejoajajajaj
 plt.savefig('Gyrate_Loop.png')
 merged_df = reduce(lambda left, right: pd.merge(left, right, on='Time'), all_df)
-merged_df.to_csv('/emdata/cchacon/MD_PolG_mutants/Gyrate_loops.csv')
+merged_df.to_csv('/emdata/cchacon/MD_PolG_mutants/Gyrate_loops_50ns_2.csv')
 

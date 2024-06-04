@@ -5,7 +5,7 @@ from remove_lines import remove_lines_starting_with
 from functools import reduce
 import matplotlib.pyplot as plt
 
-files_list=glob.glob('*loop/rmsd.xvg')
+files_list=glob.glob('*loop/rmsd_loop.xvg')
 pattern=r'(PolGa_mut\d+)_loop/.*'
 all_df=[]
 plt.figure(figsize=(10,8))
@@ -19,8 +19,7 @@ plt.grid(True)
 plt.ylabel('RMSD (A)')
 plt.xlabel('Time (ns)')
 plt.legend()
-# print("Telletrabajar es de vagos.")Que susto me has dado, pense que me hackeaban. Nah, solo estaba dando por saco un rato :) Ya te dejoajajajaj
 plt.savefig('RMSD_Loop.png')
 merged_df = reduce(lambda left, right: pd.merge(left, right, on='Time'), all_df)
-merged_df.to_csv('/emdata/cchacon/MD_PolG_mutants/RMSD_loops.csv')
+merged_df.to_csv('/emdata/cchacon/MD_PolG_mutants/RMSD_loops_50ns_2.csv')
 
