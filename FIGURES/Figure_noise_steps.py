@@ -33,7 +33,7 @@ for noise in df_whole['Noise_Steps'].unique():
 print(percentage)
 df_barplot['Percentage']=percentage
 #Barplot success rate
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(10, 12))
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
 
 # Add titles and labels
@@ -67,7 +67,7 @@ y_pred = [intercept + slope * value for value in X]
 
 # Initialize the plot
 
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(10,12))
 sns.set_theme(style='whitegrid')
 sns.pointplot(data=df_filtered, x='Noise', y='RMSD', hue= 'Noise', palette='crest', s=100,capsize=0.2, ci=95)
 
@@ -84,7 +84,7 @@ plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRMSD.png')
 
 
 df_filtered=df_filtered[df_filtered['Noise']!=30]
-plt.figure(figsize=(8,10))
+plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered, x='Noise', y='RMSD', palette='crest')
 annotator=Annotator(
     violinplot,
