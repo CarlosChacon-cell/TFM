@@ -147,9 +147,9 @@ annotator.configure(
     comparisons_correction="bonferroni")
     
 annotator.apply_and_annotate()
-plt.title('Noise Scale vs Pae_interaction', fontsize=20)
+plt.title('Noise Scale vs PAE interaction', fontsize=20)
 plt.xlabel('Noise Scale (Arb.Units)', fontsize=16)
-plt.ylabel(f'Pae_interaction ($\AA$)', fontsize=16)
+plt.ylabel(f'PAE interaction ($\AA$)', fontsize=16)
 plt.tick_params(axis='y', labelsize=14)
 plt.tick_params(axis='x', labelsize=14)
 
