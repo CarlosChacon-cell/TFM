@@ -36,21 +36,22 @@ plt.ylabel(f'RMSD ($\AA$)')
 plt.legend(title='Noise Steps')
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRMSD.png')
 
+
+df_filtered=df_filtered[df_filtered['Noise']!=30]
 plt.figure(figsize=(8,10))
-violinplot=sns.violinplot(data=df_filtered, x='Noise', y='RMSD', palette='viridis')
+violinplot=sns.violinplot(data=df_filtered, x='Noise', y='RMSD', palette='crest')
 annotator=Annotator(
     violinplot,
     data=df_filtered,
     x='Noise',
     y='RMSD',
     pairs=[
-        (5,10),(5,20),(5,30),
-        (10,20),(10,30),
-        (20,30)
+        (5,10),(5,20),
+        (10,20)
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -64,24 +65,23 @@ plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_noisesteps.png
 #df_filter hits
 df_hits=df_filtered[(df_filtered['pae_interaction'] < 10) & (df_filtered['plddt_binder']>80)]
 d_stat,p_value=ks_2samp(df_hits['RMSD'][df_hits['Noise']==10], df_hits['RMSD'][df_hits['Noise']==5])
-print('PVALUE BY KS IS: ',  p_value)
+print('P_VALUE BY KS IS: ',  p_value)
 
 #A violinplot in case it is interesting 
 plt.figure(figsize=(10,12))
-violinplot=sns.violinplot(data=df_hits, x='Noise', y='pae_interaction', palette='viridis')
+violinplot=sns.violinplot(data=df_hits, x='Noise', y='pae_interaction', palette='crest')
 annotator=Annotator(
     violinplot,
     data=df_hits,
     x='Noise',
     y='pae_interaction',
     pairs=[
-        (5,10),(5,20),(5,30),
-        (10,20),(10,30),
-        (20,30)
+        (5,10),(5,20),
+        (10,20)
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -92,6 +92,36 @@ plt.xlabel('Noise Steps (#)')
 plt.ylabel(f'Pae_interaction ($\AA$)')
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noise_steps.png')
+
+plt.figure(figsize=(10,12))
+
+violinplot=sns.violinplot(data=df_hits, x='Noise', y='plddt_binder', palette='crest')
+violinplot.set_ylim((78,88))
+
+annotator=Annotator(
+    violinplot,
+    data=df_hits,
+    x='Noise',
+    y='plddt_binder',
+    pairs=[
+        (5,10),(5,20),
+        (10,20)
+    ]
+)
+annotator.configure(
+    test='Mann-Whitney',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('Noise Steps vs Pae_interaction')
+plt.xlabel('Noise Steps (#)')
+plt.ylabel(f'pLDDT binder (Arb.Units)')
+
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_noise_steps.png')
+
+
 
 # Load the dataset
 df = pd.read_csv('/emdata/cchacon/20240522_run_264_noise_steps/output_af2.csv')
@@ -131,10 +161,8 @@ plt.gca().add_patch(rect)
 plt.text(4, 81, 'Hits Zone', color='black', fontsize=12)
 # Invert the x-axis
 plt.gca().invert_xaxis()
-
 # Add legend
 plt.legend(title='Noise Steps')
-
 # Add grid
 plt.grid(True)
 

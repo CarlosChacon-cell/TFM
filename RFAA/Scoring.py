@@ -20,7 +20,8 @@ def extract_scoring(filename):
     mean_plddt=scoring_dict['mean_plddt']
     pae_interaction=scoring_dict['pae_inter']
     pae=scoring_dict['pae']
-    return mean_plddt, pae_interaction, pae
+    plddt=scoring_dict['plddts']
+    return mean_plddt, pae_interaction, pae, plddt
 
 
 if __name__ == '__main__':
@@ -29,19 +30,20 @@ if __name__ == '__main__':
     args=parser.parse_args()
     filename=args.file
     csv_name='close_residues.csv'
-    mean_plddt,pae_interaction,pae=extract_scoring(filename)
+    mean_plddt,pae_interaction,pae, plddt=extract_scoring(filename)
     #PAE is a pytorch.Tensor with only two dimensions, so we remove the tensor structure to make things easier
     pae=pae[0]
     #Extract the several things
     protein_length, interacting_surface, residues= extract_features(csv_name, filename)
     compound_length=len(pae)- protein_length 
+    plddt=plddt[0]
     #We extract the cutre pae into one list
     cutre=[]
-    print(len(pae))
     for residue in residues:
         for atom in range(protein_length,len(pae)):
-            cutre.append(float(pae[int(residue)][atom]))
-            cutre.append(float(pae[atom][int(residue)]))
+            cutre.append(float(pae[int(residue)][atom]/plddt[int(residue)]))
+            cutre.append(float(pae[atom][int(residue)]/plddt[atom]))
+    print(cutre)
     cutre_local=np.mean(cutre)
     print('The mean plddt of the prediction is: ', mean_plddt)
     print('\nThe global pae_interaction is: ', pae_interaction)

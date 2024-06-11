@@ -25,6 +25,14 @@ plt.ylabel(f'RMSD ($\AA$)')
 plt.legend(title='Noise Scale')
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Noise_Scale_RMSD.png')
 
+X=[0.05,0.1,0.5,1]
+y=[]
+for noise in df_filtered_112['Noise'].unique():
+    y.append(np.mean(df_filtered_112['RMSD'][df_filtered_112['Noise']==noise]))
+
+slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(X, y)
+
+print(' PEARSON CORRELATION COEFFICIENT VALUE:', r_value)
 
 plt.figure(figsize=(8,10))
 violinplot=sns.violinplot(data=df_filtered_112, x='Noise', y='RMSD', palette='crest')
@@ -40,7 +48,7 @@ annotator=Annotator(
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -68,7 +76,7 @@ annotator=Annotator(
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -79,6 +87,37 @@ plt.xlabel('Noise Scale (Arb.Units)')
 plt.ylabel(f'Pae_interaction ($\AA$)')
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noise_scale.png')
+
+plt.figure(figsize=(10,12))
+violinplot=sns.violinplot(data=df_hits, x='Noise', y='plddt_binder', palette='crest')
+annotator=Annotator(
+    violinplot,
+    data=df_hits,
+    x='Noise',
+    y='plddt_binder',
+    pairs=[
+        (0.05,0.10),(0.05,0.5),(0.05,1),
+        (0.1,0.5),(0.1,1),
+        (0.5,1)
+    ]
+)
+annotator.configure(
+    test='Mann-Whitney',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('Noise Scale vs pLDDT binder')
+plt.xlabel('Noise Scale (Arb.Units)')
+plt.ylabel(f'pLDDT binder (Arb.Units)')
+
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_noise_scale.png')
+
+
+
+
+
 
 df=pd.read_csv('/emdata/cchacon/partial_diff_noise_scale_test/output_af2.csv', header=0)
 

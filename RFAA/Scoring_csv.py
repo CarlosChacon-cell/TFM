@@ -10,9 +10,10 @@ if __name__ == '__main__':
     args=parser.parse_args()
     csv_name='close_residues.csv'
     filename=glob.glob(f'{args.folder}/*_aux.pt')[0]
-    mean_plddt, pae_interaction, pae=extract_scoring(filename)
+    mean_plddt, pae_interaction, pae, plddt=extract_scoring(filename)
     #PAE is a pytorch.Tensor with only two dimensions, so we remove the tensor structure to make things easier
     pae=pae[0]
+    plddt=plddt[0]
     #Extract the several things
     protein_length, interacting_surface, residues= extract_features(csv_name, filename)
     compound_length=len(pae)- protein_length 
@@ -20,8 +21,8 @@ if __name__ == '__main__':
     cutre=[]
     for residue in residues:
         for atom in range(protein_length,len(pae)):
-            cutre.append(float(pae[int(residue)][atom]))
-            cutre.append(float(pae[atom][int(residue)]))
+            cutre.append(float(pae[int(residue)][atom]/plddt[int(residue)]))
+            cutre.append(float(pae[atom][int(residue)]/plddt[atom]))
     cutre_local=np.mean(cutre)
     score_dict={
         'Comp_name':args.folder,

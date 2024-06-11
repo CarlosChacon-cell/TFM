@@ -2,9 +2,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.patches as patches
+from statannotations.Annotator import Annotator
+import numpy as np
+from scipy.optimize import curve_fit
+
+
 
 # Load the dataset
 df = pd.read_csv('/emdata/cchacon/RFD_PD_test/output_af2.csv')
+df_filtered=df[df['campaign'].str.contains('FR')]
+df_filtered=df_filtered[(df_filtered['pae_interaction'] < 10) & (df_filtered['plddt_binder'] > 80)]
+
 
 # Filter the data
 df_FR = df[df['campaign'] == 'campaign_run_112_FR']
@@ -93,3 +101,85 @@ plt.title('Fast Relax vs No Fast Relax success rates')
 plt.ylabel('Hits success rate')
 # Show the plot
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
+
+plt.figure(figsize=(8,10))
+violinplot=sns.violinplot(data=df_filtered, x='campaign', y='pae_interaction', palette='crest')
+violinplot.set_xticklabels(['Yes', 'No'])
+annotator=Annotator(
+    violinplot,
+    data=df_filtered,
+    x='campaign',
+    y='pae_interaction',
+    pairs=[
+        ('campaign_run_112_FR', 'campaign_run_112_noFR')
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('PAE vs Fast Relax')
+plt.ylabel(f'pae_interaction ($\AA$)')
+plt.xlabel('Fast Relax Protocol')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_FR.png')
+
+plt.figure(figsize=(8,10))
+violinplot=sns.violinplot(data=df_filtered, x='campaign', y='plddt_binder', palette='crest')
+violinplot.set_xticklabels(['Yes', 'No'])
+annotator=Annotator(
+    violinplot,
+    data=df_filtered,
+    x='campaign',
+    y='plddt_binder',
+    pairs=[
+        ('campaign_run_112_FR', 'campaign_run_112_noFR')
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('pLDDT vs _Fast Relax')
+plt.ylabel(f'pLDDT binder')
+plt.xlabel('Fast Relax Protocol')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_FR.png')
+
+rmsd_fr_path='/emdata/cchacon/RFD_PD_test/campaign_run_112_FR/hits/rmsd.csv'
+rmsd_nofr_path='/emdata/cchacon/RFD_PD_test/campaign_run_112_noFR/hits/rmsd.csv'
+
+df_rmsd_fr=pd.read_csv(rmsd_fr_path, header=0)
+df_rmsd_fr['FR']='Fast Relax'
+df_rmsd_nofr=pd.read_csv(rmsd_nofr_path, header=0)
+df_rmsd_nofr['FR']='No Fast Relax'
+
+df_rmsd=pd.concat([df_rmsd_fr, df_rmsd_nofr])
+plt.figure(figsize=(8,10))
+violinplot=sns.violinplot(data=df_rmsd, x='FR', y='Global RMSD', palette='crest')
+violinplot.set_xticklabels(['Yes', 'No'])
+
+annotator=Annotator(
+    violinplot,
+    data=df_rmsd,
+    x='FR',
+    y='Global RMSD',
+    pairs=[
+        ('Fast Relax', 'No Fast Relax')
+    ]
+)
+annotator.configure(
+    test='t-test_ind',
+    text_format='star',
+    loc='inside',
+    comparisons_correction="bonferroni")
+    
+annotator.apply_and_annotate()
+plt.title('RMSD vs _Fast Relax')
+plt.ylabel(f'RMSD ($\AA$)')
+plt.xlabel('Fast Relax Protocol')
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_FR.png')

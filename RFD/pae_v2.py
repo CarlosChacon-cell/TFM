@@ -52,18 +52,37 @@ residues_df=pd.read_csv(residuefilename, index_col=False)
 binderlen=residues_df['length'][residues_df['protein_name']==protein_name]
 binderlen=int(binderlen.iloc[0])
 interacting_surface=float(residues_df['interacting_surface'][residues_df['protein_name']==protein_name].iloc[0])
-residues=residues_df['interacting_residues'][residues_df['protein_name']==protein_name].str.split()
-residues=residues.to_list()[0]
+binder_residues=residues_df['binder_residues'][residues_df['protein_name']==protein_name].str.split()
+binder_residues=binder_residues.to_list()[0]
+target_residues=residues_df['target_residues'][residues_df['protein_name']==protein_name].str.split()
+target_residues=target_residues.to_list()[0]
+
+
 if type(residues)==float:
-    pae_interaction_global=35
-    pae_interaction_local=35
+    pae1=pae[binderlen:]
+
+    pae2=pae[:binderlen]
+
+    pae1_filtered=[]
+    pae2_filtered=[]
+
+    for lista in pae1:
+        pae1_filtered.append(lista[:binderlen])
+
+    for lista in pae2:
+        pae2_filtered.append(lista[binderlen:])
+
+    pae_interaction_global=(np.mean(pae1_filtered)+np.mean(pae2_filtered))
+    pae_interaction_local=pae_interaction_global
 else:
-    residues=[int(number)-1 for number in residues]
+    binder_residues=[int(number)-1 for number in binder_residues]
+    target_residues=[int(number)-1 for number in target_residues]
     filtered_pae=pae[binderlen:]
 
-    for lists in filtered_pae:
-        for residue in residues:
-            mean.append(lists[residue])
+    for residue_target in target_residues:
+        lists=pae[residue_target]
+        for binder_residue in binder_residues:
+            mean.append(lists[binder_residue])
     pae_interaction_local=np.mean(mean)
 
     pae1=pae[binderlen:]

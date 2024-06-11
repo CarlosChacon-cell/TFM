@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import glob
 import seaborn as sns 
+from scipy.optimize import curve_fit
 from scipy.stats import linregress
 from scipy.stats import ttest_ind
 from statannotations.Annotator import Annotator
+from sklearn.metrics import r2_score
 # Load the CSV file
 file_path = glob.glob('/emdata/cchacon/Scaffolding/campaign_run_9_again/hits/pdbs/pae_local_global.csv')[0]
 
@@ -51,19 +53,35 @@ plt.title('Global PAE Interaction vs Local PAE Interaction')
 plt.grid(True)
 plt.xlim((0, 30))
 plt.ylim((0, 30))
-sns.regplot(data=df, y='pae_interaction_local', x='pae_interaction_global', scatter=False, color='black', line_kws={'label': 'Linear fit'})
+# sns.regplot(data=df, y='pae_interaction_local', x='pae_interaction_global', scatter=False, color='black', line_kws={'label': 'Linear fit'})
 
 #R square
 slope, intercept, r_value, p_value, std_err = linregress(global_pae, local_pae)
 r_squared = r_value**2
-print(f'R-squared: {r_squared:.2f}')
 
+print(f'R-squared: {r_squared:.2f}')
 
 # Add vertical and horizontal lines
 plt.axvline(x=10, color='red', linestyle='--', label='Global threshold')
 plt.axhline(y=10, color='blue', linestyle='--', label='CUTRE threshold')
-plt.legend()
+plt.legend(title='Interacting Surface (%)' )
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Figure_CUTREvsPaeInteraction.png')
+
+# Define the exponential function
+def exponential_model(x, a, b, c):
+    return a * np.exp(b * x) + c
+
+# Fit the exponential model
+params_exp, covariance_exp = curve_fit(exponential_model, global_pae, local_pae, maxfev=5000)
+
+# Generate predictions
+pred_exp = exponential_model(global_pae, *params_exp)
+
+r2_exp = r2_score(local_pae, pred_exp)
+rss_exp = np.sum((local_pae - pred_exp) ** 2)
+
+print(f'EXPONENTIAL FITTING R_VALUE: {r2_exp} RSS: {rss_exp}')
+
 
 plt.figure(figsize=(10,12))
 no_hit_df=df[(df['pae_interaction_global'] > 20)]
@@ -89,9 +107,9 @@ plt.figure(figsize=(10,14))
 #Create the new variables for plotting
 df['Improvement']=df['pae_interaction_global']-df['pae_interaction_local']
 df['interaction_group']=df['interacting_surface'].round(-1)
-boxplot=sns.boxplot(data=df, x=df['interaction_group'], y='Improvement')
+violinplot=sns.violinplot(data=df, x=df['interaction_group'], y='Improvement')
 annotator=Annotator(
-    boxplot,
+    violinplot,
     data=df,
     x='interaction_group',
     y='Improvement',
@@ -111,6 +129,7 @@ annotator.configure(
 annotator.apply_and_annotate()
 # sns.scatterplot(data=df, x='interacting_surface', y='Improvement', hue='pae_interaction_global', s=100)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/boxplot_interactingSurface_Improvement_cutre.png')
+
 # subset_0=df['Improvement'][df['interaction_group']==0]
 # subset_10=df['Improvement'][df['interaction_group']==10]
 # subset_20=df['Improvement'][df['interaction_group']==20]
