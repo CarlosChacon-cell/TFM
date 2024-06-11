@@ -36,7 +36,7 @@ df_barplot['Percentage']=percentage
 plt.figure(figsize=(12, 10))
 
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
-
+sns.set_theme(style='whitegrid')
 # Add titles and labels
 plt.title('Noise Scale Success Rates',fontsize=26)
 plt.ylabel('Hits Success Rate (%)',fontsize=22)
@@ -44,7 +44,7 @@ plt.xlabel('Noise Scale (Arb.Units)', fontsize=22)
 barplot.set_xticklabels((f'0.05\n n={len( df_filtered_112[df_filtered_112["Noise"]==0.05])}', 
                          f'0.1\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.1])}', 
                          f'0.5\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.5])}', 
-                         f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'), fontsize=14)
+                         f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'), fontsize=20)
 
 # Show the plot
 plt.ylim((0,0.07))
