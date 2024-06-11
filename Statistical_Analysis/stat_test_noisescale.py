@@ -16,47 +16,47 @@ pae_interaction_ns01=df_filtered['pae_interaction'][(df_filtered['pae_interactio
 pae_interaction_ns05=df_filtered['pae_interaction'][(df_filtered['pae_interaction'] < 10) & (df_filtered['Noise']=='05')]
 pae_interaction_ns1=df_filtered['pae_interaction'][(df_filtered['pae_interaction'] < 10) & (df_filtered['Noise']=='1')]
 
-bonferroni_correction=0.05/6
+threshold=0.05
 
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns005, pae_interaction_ns01, equal_var=False)
-print(f'T-Test for pae_interaction between 005 and 01 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 005 and 01 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns005, pae_interaction_ns05, equal_var=False)
-print(f'T-Test for pae_interaction between 005 and 05 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 005 and 05 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns005, pae_interaction_ns1, equal_var=False)
-print(f'T-Test for pae_interaction between 005 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 005 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns01, pae_interaction_ns05, equal_var=False)
-print(f'T-Test for pae_interaction between 01 and 05 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 01 and 05 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns01, pae_interaction_ns1, equal_var=False)
-print(f'T-Test for pae_interaction between 01 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 01 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns1, pae_interaction_ns05, equal_var=False)
-print(f'T-Test for pae_interaction between 05 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value}')
-if p_value < bonferroni_correction:
+print(f'T-Test for pae_interaction between 05 and 1 noise scale: t-stat = {t_stat}, p-value = {p_value*6}')
+if p_value < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -81,8 +81,8 @@ observed = [[positives_005ns, total_005ns - positives_005ns], [positives_01ns, t
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 005 and 01 ns:", chi2)
-print("P-value between 005 and 01 ns:", p)
-if p < bonferroni_correction:
+print("P-value between 005 and 01 ns:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -93,8 +93,8 @@ observed = [[positives_05ns, total_05ns - positives_05ns], [positives_005ns, tot
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 005 and 05:", chi2)
-print("P-value between 005 and 05:", p)
-if p < bonferroni_correction:
+print("P-value between 005 and 05:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -105,8 +105,8 @@ observed = [[positives_1ns, total_1ns - positives_1ns], [positives_005ns, total_
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 005 and 1:", chi2)
-print("P-value between 005 and 1:", p)
-if p < bonferroni_correction:
+print("P-value between 005 and 1:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -117,8 +117,8 @@ observed = [[positives_1ns, total_1ns - positives_1ns], [positives_01ns, total_0
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 01 and 1:", chi2)
-print("P-value between 01 and 1:", p)
-if p < bonferroni_correction:
+print("P-value between 01 and 1:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -130,8 +130,8 @@ observed = [[positives_1ns, total_1ns - positives_1ns], [positives_05ns, total_0
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 05 and 1:", chi2)
-print("P-value between 05 and 1:", p)
-if p < bonferroni_correction:
+print("P-value between 05 and 1:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -143,8 +143,8 @@ observed = [[positives_05ns, total_05ns - positives_05ns], [positives_01ns, tota
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 01 and 05:", chi2)
-print("P-value between 01 and 05:", p)
-if p < bonferroni_correction:
+print("P-value between 01 and 05:", p*6)
+if p*6 < threshold:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')

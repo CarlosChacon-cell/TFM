@@ -78,10 +78,13 @@ df_filtered_112.loc[df_filtered_112['Noise'] == '1', 'Noise'] = 1.0
 plt.figure(figsize=(12,10))
 sns.set_theme(style='whitegrid')
 sns.pointplot(data=df_filtered_112, x='Noise', y='RMSD', hue= 'Noise', palette='crest', s=100,capsize=0.2, ci=95 )
-plt.title('RMSD vs Noise Scale')
-plt.xlabel('Noise Scale (Arb.U)')
-plt.ylabel(f'RMSD ($\AA$)')
+plt.title('RMSD vs Noise Scale', fontsize=20)
+plt.xlabel('Noise Scale (Arb.U)', fontsize=16)
+plt.ylabel(f'RMSD ($\AA$)', fontsize=16)
 plt.legend(title='Noise Scale')
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
+
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/Noise_Scale_RMSD.png')
 
 X=[0.05,0.1,0.5,1]
@@ -113,9 +116,12 @@ annotator.configure(
     comparisons_correction="bonferroni")
     
 annotator.apply_and_annotate()
-plt.title('RMSD vs Noise Scale')
-plt.ylabel(f'RMSD ($\AA$)')
-plt.xlabel('Noise Scale (Arb.U)')
+plt.title('RMSD vs Noise Scale', fontsize=20)
+plt.ylabel(f'RMSD ($\AA$)', fontsize=16)
+plt.xlabel('Noise Scale (Arb.U)', fontsize=16)
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
+
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_noisescale.png')
 
 #df_filter hits
@@ -141,9 +147,11 @@ annotator.configure(
     comparisons_correction="bonferroni")
     
 annotator.apply_and_annotate()
-plt.title('Noise Scale vs Pae_interaction')
-plt.xlabel('Noise Scale (Arb.Units)')
-plt.ylabel(f'Pae_interaction ($\AA$)')
+plt.title('Noise Scale vs Pae_interaction', fontsize=20)
+plt.xlabel('Noise Scale (Arb.Units)', fontsize=16)
+plt.ylabel(f'Pae_interaction ($\AA$)', fontsize=16)
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noise_scale.png')
 
@@ -167,10 +175,11 @@ annotator.configure(
     comparisons_correction="bonferroni")
     
 annotator.apply_and_annotate()
-plt.title('Noise Scale vs pLDDT binder')
-plt.xlabel('Noise Scale (Arb.Units)')
-plt.ylabel(f'pLDDT binder (Arb.Units)')
-
+plt.title('Noise Scale vs pLDDT binder', fontsize=20)
+plt.xlabel('Noise Scale (Arb.Units)',fontsize=16)
+plt.ylabel(f'pLDDT binder (Arb.Units)', fontsize=16)
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_noise_scale.png')
 
 
@@ -203,9 +212,12 @@ sns.scatterplot(data=df_filtered_112,x='pae_interaction',y='plddt_binder', hue='
 sns.scatterplot(data=df_original, x='pae_interaction', y='plddt_binder', color='red', s=100, edgecolors='k', label='Original')
 
 # Add titles and labels
-plt.title('PAE Interaction vs. pLDDT Binder Run_112')
-plt.xlabel('PAE Interaction')
-plt.ylabel('pLDDT Binder')
+plt.title('PAE Interaction vs. pLDDT Binder Run_112', fontsize=20)
+plt.xlabel('PAE Interaction', fontsize=16)
+plt.ylabel('pLDDT Binder', fontsize=16)
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
+
 
 # Highlight specific region with a square
 rect = patches.Rectangle((0, 80), 10, 20, linewidth=2, edgecolor='black', facecolor='none')
@@ -258,9 +270,11 @@ sns.scatterplot(data=df_filtered_264, x='pae_interaction', y='plddt_binder', hue
 sns.scatterplot(data=df_original, x='pae_interaction', y='plddt_binder', color='red', s=100, edgecolors='k', label='Original')
 
 # Add titles and labels
-plt.title('PAE Interaction vs. pLDDT Binder Run_264')
-plt.xlabel('PAE Interaction')
-plt.ylabel('pLDDT Binder')
+plt.title('PAE Interaction vs. pLDDT Binder Run_264', fontsize=20)
+plt.xlabel('PAE Interaction', fontsize=16)
+plt.ylabel('pLDDT Binder', fontsize=16)
+plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='x', labelsize=14)
 
 # Highlight specific region with a square
 rect = patches.Rectangle((0, 80), 10, 20, linewidth=2, edgecolor='black', facecolor='none')

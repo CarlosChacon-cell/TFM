@@ -19,7 +19,7 @@ observed = [[positives_FR, total_FR - positives_FR], [positives_no_FR, total_no_
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic:", chi2)
-print("P-value:", p)
+print("P-value:", p*6)
 
 
 # Data
@@ -41,8 +41,6 @@ pae_interaction_ns5=df['pae_interaction'][(df['pae_interaction'] < 15) & (df['ca
 pae_interaction_ns10=df['pae_interaction'][(df['pae_interaction'] < 15) & (df['campaign']=='campaign_run_112_ns10')]
 pae_interaction_ns20=df['pae_interaction'][(df['pae_interaction'] < 15) & (df['campaign']=='campaign_run_112_ns20')]
 pae_interaction_ns30=df['pae_interaction'][(df['pae_interaction'] < 15) & (df['campaign']=='campaign_run_112_ns30')]
-
-bonferroni_correction=0.05/6
 # T-Test for pae_interaction
 t_stat, p_value = ttest_ind(pae_interaction_ns5, pae_interaction_ns10, equal_var=False)
 print(f'T-Test for pae_interaction between 5 and 10 noise steps: t-stat = {t_stat}, p-value = {p_value}')
@@ -82,8 +80,8 @@ observed = [[positives_5ns, total_5ns - positives_5ns], [positives_10ns, total_1
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 5 and 10 ns:", chi2)
-print("P-value between 5 and 10 ns:", p)
-if p < bonferroni_correction:
+print("P-value between 5 and 10 ns:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -95,8 +93,8 @@ observed = [[positives_20ns, total_20ns - positives_20ns], [positives_5ns, total
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 5 and 20:", chi2)
-print("P-value between 5 and 20:", p)
-if p < bonferroni_correction:
+print("P-value between 5 and 20:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -107,8 +105,8 @@ observed = [[positives_30ns, total_30ns - positives_30ns], [positives_5ns, total
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 5 and 30:", chi2)
-print("P-value between 5 and 30:", p)
-if p < bonferroni_correction:
+print("P-value between 5 and 30:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -119,8 +117,8 @@ observed = [[positives_30ns, total_30ns - positives_30ns], [positives_10ns, tota
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 10 and 30:", chi2)
-print("P-value between 10 and 30:", p)
-if p < bonferroni_correction:
+print("P-value between 10 and 30:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -132,8 +130,8 @@ observed = [[positives_30ns, total_30ns - positives_30ns], [positives_20ns, tota
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 20 and 30:", chi2)
-print("P-value between 20 and 30:", p)
-if p < bonferroni_correction:
+print("P-value between 20 and 30:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
@@ -144,8 +142,8 @@ observed = [[positives_20ns, total_20ns - positives_20ns], [positives_10ns, tota
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic between 10 and 20:", chi2)
-print("P-value between 10 and 20:", p)
-if p < bonferroni_correction:
+print("P-value between 10 and 20:", p*6)
+if p*6 < 0.05:
     print('########\n')
     print('This difference is significant\n')
     print('#########\n')
