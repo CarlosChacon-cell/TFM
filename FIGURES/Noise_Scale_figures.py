@@ -33,10 +33,10 @@ for noise in df_filtered_112['Noise'].unique():
     percentage.append(percent)
 df_barplot['Percentage']=percentage
 #Barplot success rate
-plt.figure(figsize=(12, 10))
+plt.figure(figsize=(10,12))
+sns.set_theme(style='whitegrid')
 
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
-sns.set_theme(style='whitegrid')
 # Add titles and labels
 plt.title('Noise Scale Success Rates',fontsize=26)
 plt.ylabel('Hits Success Rate (%)',fontsize=22)
