@@ -85,7 +85,7 @@ slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(X, y)
 
 print(' PEARSON CORRELATION COEFFICIENT VALUE:', r_value)
 
-plt.figure(figsize=(8,12))
+plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered_112, x='Noise', y='RMSD', palette='crest')
 annotator=Annotator(
     violinplot,
