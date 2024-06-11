@@ -77,7 +77,7 @@ df_plot = pd.DataFrame(data)
 sns.set(style="whitegrid")
 
 # Create a bar plot
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(10,12))
 barplot = sns.barplot(x='Campaign', y='Percentage', data=df_plot, palette='crest')
 
 # Add significance bracket with an asterisk
@@ -96,19 +96,19 @@ props = dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white')
 
 
 # Add titles and labels
-plt.title('Fast Relax vs No Fast Relax Success Rates', fontsize=20)
-plt.ylabel('Hits Success Rate (%)', fontsize=16)
-plt.xlabel('Campaign', fontsize=16)
-barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No Fast Relax\n n={positives_noFR+negatives_noFR}'), fontsize=14)
+plt.title('Fast Relax vs No Fast Relax Success Rates', fontsize=26)
+plt.ylabel('Hits Success Rate (%)', fontsize=22)
+plt.xlabel('Fast Relax Protocol', fontsize=22)
+barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No Fast Relax\n n={positives_noFR+negatives_noFR}'), fontsize=20)
 # Show the plot
-plt.tick_params(axis='y', labelsize=14)
+plt.tick_params(axis='y', labelsize=20)
 
 plt.ylim((0,0.07))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
 
-plt.figure(figsize=(8,10))
+plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered, x='campaign', y='pae_interaction', palette='crest')
-violinplot.set_xticklabels(['Yes', 'No'])
+violinplot.set_xticklabels(['Fast Relax', 'No Fast Relax'])
 annotator=Annotator(
     violinplot,
     data=df_filtered,
@@ -122,17 +122,20 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('PAE vs Fast Relax')
-plt.ylabel(f'pae_interaction ($\AA$)')
-plt.xlabel('Fast Relax Protocol')
+plt.title('PAE vs Fast Relax', fontsize=26)
+plt.ylabel(f'PAE interaction ($\AA$)', fontsize=22)
+plt.xlabel('Fast Relax Protocol', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_FR.png')
 
-plt.figure(figsize=(8,10))
+plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered, x='campaign', y='plddt_binder', palette='crest')
-violinplot.set_xticklabels(['Yes', 'No'])
+violinplot.set_xticklabels(['Fast Relax','No Fast Relax'])
 annotator=Annotator(
     violinplot,
     data=df_filtered,
@@ -146,12 +149,15 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('pLDDT vs _Fast Relax')
-plt.ylabel(f'pLDDT binder')
-plt.xlabel('Fast Relax Protocol')
+plt.title('pLDDT vs _Fast Relax', fontsize=26)
+plt.ylabel(f'pLDDT binder', fontsize=22)
+plt.xlabel('Fast Relax Protocol', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_FR.png')
 
 rmsd_fr_path='/emdata/cchacon/RFD_PD_test/campaign_run_112_FR/hits/rmsd.csv'
@@ -163,9 +169,9 @@ df_rmsd_nofr=pd.read_csv(rmsd_nofr_path, header=0)
 df_rmsd_nofr['FR']='No Fast Relax'
 
 df_rmsd=pd.concat([df_rmsd_fr, df_rmsd_nofr])
-plt.figure(figsize=(8,10))
+plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_rmsd, x='FR', y='Global RMSD', palette='crest')
-violinplot.set_xticklabels(['Yes', 'No'])
+violinplot.set_xticklabels(['Fast Relax', 'No Fast Relax'])
 
 annotator=Annotator(
     violinplot,
@@ -180,10 +186,13 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('RMSD vs _Fast Relax')
-plt.ylabel(f'RMSD ($\AA$)')
-plt.xlabel('Fast Relax Protocol')
+plt.title('RMSD vs _Fast Relax', fontsize=26)
+plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
+plt.xlabel('Fast Relax Protocol', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_FR.png')
