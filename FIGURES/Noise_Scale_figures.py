@@ -34,19 +34,22 @@ for noise in df_filtered_112['Noise'].unique():
 df_barplot['Percentage']=percentage
 #Barplot success rate
 plt.figure(figsize=(10, 8))
+
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
 
 # Add titles and labels
-plt.title('Noise Scale Success Rates')
-plt.ylabel('Hits Success Rate (%)')
-plt.xlabel('Noise Scale (Arb.Units)')
+plt.title('Noise Scale Success Rates',fontsize=20)
+plt.ylabel('Hits Success Rate (%)',fontsize=16)
+plt.xlabel('Noise Scale (Arb.Units)', fontsize=16)
 barplot.set_xticklabels((f'0.05\n n={len( df_filtered_112[df_filtered_112["Noise"]==0.05])}', 
                          f'0.1\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.1])}', 
                          f'0.5\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.5])}', 
-                         f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'))
+                         f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'), fontsize=14)
 
 # Show the plot
 plt.ylim((0,0.07))
+plt.tick_params(axis='y', labelsize=14)
+
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisescale.png')
 
 

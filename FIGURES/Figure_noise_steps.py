@@ -37,14 +37,15 @@ plt.figure(figsize=(10, 8))
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
 
 # Add titles and labels
-plt.title('Noise Steps Success Rates')
-plt.ylabel('Hits Success Rate (%)')
-plt.xlabel('Noise Steps (#)')
+plt.title('Noise Steps Success Rates', fontsize=20)
+plt.ylabel('Hits Success Rate (%)', fontsize=16)
+
+plt.xlabel('Noise Steps (#)', fontsize=16)
 barplot.set_xticklabels((f'5\n n={len( df_whole[df_whole["Noise_Steps"]==5])}', 
                          f'10\n n={len(df_whole[df_whole["Noise_Steps"]==10])}', 
                          f'20\n n={len(df_whole[df_whole["Noise_Steps"]==20])}', 
-                         f'30\n n={len(df_whole[df_whole["Noise_Steps"]==30])}'))
-
+                         f'30\n n={len(df_whole[df_whole["Noise_Steps"]==30])}'), fontsize=14)
+plt.tick_params(axis='y', labelsize=14)
 # Show the plot
 plt.ylim((0,0.07))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisesteps.png')

@@ -77,7 +77,7 @@ df_plot = pd.DataFrame(data)
 sns.set(style="whitegrid")
 
 # Create a bar plot
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(10, 8))
 barplot = sns.barplot(x='Campaign', y='Percentage', data=df_plot, palette='crest')
 
 # Add significance bracket with an asterisk
@@ -85,7 +85,6 @@ x1, x2 = 0, 1   # x-coordinates of the bars
 y, h, col = max(df_plot['Percentage']) + 0.01, 0.02, 'k'  # y-coordinate, height of the bracket, color
 plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1.5, c=col)
 plt.text((x1+x2)*.5, y+h, "*", ha='center', va='bottom', color=col)
-
 # Add a box with the p-value in the upper left corner
 p_value = 0.048  # Replace with the actual p-value when available
 textstr = f'p-value = {p_value}'
@@ -97,10 +96,13 @@ props = dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white')
 
 
 # Add titles and labels
-plt.title('Fast Relax vs No Fast Relax Success Rates')
-plt.ylabel('Hits Success Rate (%)')
-barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No Fast Relax\n n={positives_noFR+negatives_noFR}'))
+plt.title('Fast Relax vs No Fast Relax Success Rates', fontsize=20)
+plt.ylabel('Hits Success Rate (%)', fontsize=16)
+plt.xlabel('Campaign', fontsize=16)
+barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No Fast Relax\n n={positives_noFR+negatives_noFR}'), fontsize=14)
 # Show the plot
+plt.tick_params(axis='y', labelsize=14)
+
 plt.ylim((0,0.07))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
 
