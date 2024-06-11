@@ -38,15 +38,15 @@ sns.set_theme(style='whitegrid')
 barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
 
 # Add titles and labels
-plt.title('Noise Steps Success Rates', fontsize=24)
-plt.ylabel('Hits Success Rate (%)', fontsize=20)
+plt.title('Noise Steps Success Rates', fontsize=26)
+plt.ylabel('Hits Success Rate (%)', fontsize=22)
 
-plt.xlabel('Noise Steps (#)', fontsize=20)
+plt.xlabel('Noise Steps (#)', fontsize=22)
 barplot.set_xticklabels((f'5\n n={len( df_whole[df_whole["Noise_Steps"]==5])}', 
                          f'10\n n={len(df_whole[df_whole["Noise_Steps"]==10])}', 
                          f'20\n n={len(df_whole[df_whole["Noise_Steps"]==20])}', 
                          f'30\n n={len(df_whole[df_whole["Noise_Steps"]==30])}'), fontsize=18)
-plt.tick_params(axis='y', labelsize=18)
+plt.tick_params(axis='y', labelsize=20)
 # Show the plot
 plt.ylim((0,0.07))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisesteps.png')
@@ -75,11 +75,11 @@ sns.pointplot(data=df_filtered, x='Noise', y='RMSD', hue= 'Noise', palette='cres
 
 # Plot the regression line
 # sns.lineplot(x=X, y=y_pred, label=f'$r$={r_value:.2f}', color='red', ax=ax) ##Doesn't work##
-plt.title('RMSD vs Noise Steps', fontsize=24)
-plt.xlabel('Noise Steps (#)', fontsize=20)
-plt.ylabel(f'RMSD ($\AA$)', fontsize=20)
-plt.tick_params(axis='y', labelsize=18)
-plt.tick_params(axis='x', labelsize=18)
+plt.title('RMSD vs Noise Steps', fontsize=26)
+plt.xlabel('Noise Steps (#)', fontsize=22)
+plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 plt.legend(title='Noise Steps')
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/NoiseStepsRMSD.png')
 
@@ -101,14 +101,15 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('RMSD vs Noise Steps', fontsize=24)
-plt.ylabel(f'RMSD ($\AA$)', fontsize=20)
-plt.xlabel('Noise Steps(#)', fontsize=20)
-plt.tick_params(axis='y', labelsize=18)
-plt.tick_params(axis='x', labelsize=18)
+plt.title('RMSD vs Noise Steps', fontsize=26)
+plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
+plt.xlabel('Noise Steps(#)', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_rmsd_noisesteps.png')
 
@@ -134,14 +135,15 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('Noise Steps vs PAE interaction', fontsize=24)
-plt.xlabel('Noise Steps (#)', fontsize=20)
-plt.ylabel(f'PAE interaction ($\AA$)', fontsize=20)
-plt.tick_params(axis='y', labelsize=18)
-plt.tick_params(axis='x', labelsize=18)
+plt.title('Noise Steps vs PAE interaction', fontsize=26)
+plt.xlabel('Noise Steps (#)', fontsize=22)
+plt.ylabel(f'PAE interaction ($\AA$)', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noise_steps.png')
@@ -165,14 +167,15 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni")
+    comparisons_correction="bonferroni",
+    fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('Noise Steps vs pLDDT binder', fontsize=24)
-plt.xlabel('Noise Steps (#)', fontsize=20)
-plt.ylabel(f'pLDDT binder (Arb.Units)', fontsize=20)
-plt.tick_params(axis='y', labelsize=18)
-plt.tick_params(axis='x', labelsize=18)
+plt.title('Noise Steps vs pLDDT binder', fontsize=26)
+plt.xlabel('Noise Steps (#)', fontsize=22)
+plt.ylabel(f'pLDDT binder (Arb.Units)', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_plddt_binder_noise_steps.png')
@@ -207,11 +210,11 @@ sns.scatterplot(data=df_filtered, x='plddt_binder', y='pae_interaction', hue='No
 sns.scatterplot(data=df_original, x='plddt_binder', y='pae_interaction', color='red', s=100, label='Original')
 
 # Add titles and labels
-plt.title('PAE Interaction vs. pLDDT Binder run_264', fontsize=24)
-plt.xlabel('PAE Interaction', fontsize=20)
-plt.ylabel('pLDDT Binder', fontsize=20)
-plt.tick_params(axis='y', labelsize=18)
-plt.tick_params(axis='x', labelsize=18)
+plt.title('PAE Interaction vs. pLDDT Binder run_264', fontsize=26)
+plt.xlabel('PAE Interaction', fontsize=22)
+plt.ylabel('pLDDT Binder', fontsize=22)
+plt.tick_params(axis='y', labelsize=20)
+plt.tick_params(axis='x', labelsize=20)
 
 
 # Highlight specific region with a square
