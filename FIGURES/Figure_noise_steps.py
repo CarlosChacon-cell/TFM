@@ -13,6 +13,49 @@ df = pd.read_csv('/emdata/cchacon/RFD_PD_test/pdbs/rmsd_noise_steps.csv')
 df_filtered = df[df['campaign'].str.contains('campaign_run_112_ns')]
 df_filtered['Noise'] = df_filtered['campaign'].str.extract('campaign_run_112_ns(\d+)').astype(int)
 
+df_whole=pd.read_csv('/emdata/cchacon/RFD_PD_test/output_af2_NS.csv')
+print(df_whole)
+
+df_barplot=pd.DataFrame()
+df_barplot['Noise']=df_whole['Noise_Steps'].unique()
+percentage=[]
+# Loop through each unique noise value
+for noise in df_whole['Noise_Steps'].unique():
+    # Filter the DataFrame based on the current noise level and the conditions
+    filtered = df_whole[(df_whole['Noise_Steps'] == noise) & 
+                        (df_whole['pae_interaction'] < 10) & 
+                        (df_whole['plddt_binder'] > 80)]
+    # Calculate the percentage
+    percent = len(filtered) / len(df_whole[df_whole['Noise_Steps'] == noise])
+    
+    # Append the result to the percentage list
+    percentage.append(percent)
+print(percentage)
+df_barplot['Percentage']=percentage
+#Barplot success rate
+plt.figure(figsize=(10, 8))
+barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
+
+# Add titles and labels
+plt.title('Noise Steps Success Rates')
+plt.ylabel('Hits Success Rate (%)')
+plt.xlabel('Noise Steps (#)')
+barplot.set_xticklabels((f'5\n n={len( df_whole[df_whole["Noise_Steps"]==5])}', 
+                         f'10\n n={len(df_whole[df_whole["Noise_Steps"]==10])}', 
+                         f'20\n n={len(df_whole[df_whole["Noise_Steps"]==20])}', 
+                         f'30\n n={len(df_whole[df_whole["Noise_Steps"]==30])}'))
+
+# Show the plot
+plt.ylim((0,0.07))
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisesteps.png')
+
+
+
+
+
+
+
+
 X=[5,10,20,30]
 y=[]
 for noise in df_filtered['Noise'].unique():

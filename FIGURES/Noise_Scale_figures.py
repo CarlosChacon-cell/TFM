@@ -5,6 +5,51 @@ import numpy as np
 import scipy
 import matplotlib.patches as patches
 from statannotations.Annotator import Annotator
+
+# Load data
+df = pd.read_csv('/emdata/cchacon/partial_diff_noise_scale_test/output_af2.csv')
+print(df)
+# Prepare data for plotting
+df_filtered_112 = df[df['campaign'].str.contains('run_112_noise_scale')]
+df_filtered_112['Noise'] = df_filtered_112['campaign'].str.extract('run_112_noise_scale_(\d+)').astype(str)
+df_filtered_112.loc[df_filtered_112['Noise'] == '005', 'Noise'] = 0.05
+df_filtered_112.loc[df_filtered_112['Noise'] == '01', 'Noise'] = 0.1
+df_filtered_112.loc[df_filtered_112['Noise'] == '05', 'Noise'] = 0.5
+df_filtered_112.loc[df_filtered_112['Noise'] == '1', 'Noise'] = 1.0
+
+df_barplot=pd.DataFrame()
+df_barplot['Noise']=df_filtered_112['Noise'].unique()
+percentage=[]
+# Loop through each unique noise value
+for noise in df_filtered_112['Noise'].unique():
+    # Filter the DataFrame based on the current noise level and the conditions
+    filtered = df_filtered_112[(df_filtered_112['Noise'] == noise) & 
+                        (df_filtered_112['pae_interaction'] < 10) & 
+                        (df_filtered_112['plddt_binder'] > 80)]
+    # Calculate the percentage
+    percent = len(filtered) / len(df_filtered_112[df_filtered_112['Noise'] == noise])
+    
+    # Append the result to the percentage list
+    percentage.append(percent)
+df_barplot['Percentage']=percentage
+#Barplot success rate
+plt.figure(figsize=(10, 8))
+barplot = sns.barplot(x='Noise', y='Percentage', data=df_barplot, palette='crest')
+
+# Add titles and labels
+plt.title('Noise Scale Success Rates')
+plt.ylabel('Hits Success Rate (%)')
+plt.xlabel('Noise Scale (Arb.Units)')
+barplot.set_xticklabels((f'0.05\n n={len( df_filtered_112[df_filtered_112["Noise"]==0.05])}', 
+                         f'0.1\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.1])}', 
+                         f'0.5\n n={len(df_filtered_112[df_filtered_112["Noise"]==0.5])}', 
+                         f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'))
+
+# Show the plot
+plt.ylim((0,0.07))
+plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisescale.png')
+
+
 # Load data
 df = pd.read_csv('/emdata/cchacon/partial_diff_noise_scale_test/rmsd_noise_scale.csv')
 print(df)
@@ -15,6 +60,17 @@ df_filtered_112.loc[df_filtered_112['Noise'] == '005', 'Noise'] = 0.05
 df_filtered_112.loc[df_filtered_112['Noise'] == '01', 'Noise'] = 0.1
 df_filtered_112.loc[df_filtered_112['Noise'] == '05', 'Noise'] = 0.5
 df_filtered_112.loc[df_filtered_112['Noise'] == '1', 'Noise'] = 1.0
+
+
+
+
+
+
+
+
+
+
+
 
 plt.figure(figsize=(12,10))
 sns.set_theme(style='whitegrid')

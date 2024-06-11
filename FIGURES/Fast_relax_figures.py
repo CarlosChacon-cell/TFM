@@ -78,7 +78,7 @@ sns.set(style="whitegrid")
 
 # Create a bar plot
 plt.figure(figsize=(8, 6))
-barplot = sns.barplot(x='Campaign', y='Percentage', data=df_plot, palette=['blue', 'green'])
+barplot = sns.barplot(x='Campaign', y='Percentage', data=df_plot, palette='crest')
 
 # Add significance bracket with an asterisk
 x1, x2 = 0, 1   # x-coordinates of the bars
@@ -92,14 +92,16 @@ textstr = f'p-value = {p_value}'
 props = dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white')
 
 # Place the box in the upper left corner
-plt.gca().text(0.02, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
-               verticalalignment='top', bbox=props)
+# plt.gca().text(0.02, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
+#                verticalalignment='top', bbox=props)
 
 
 # Add titles and labels
-plt.title('Fast Relax vs No Fast Relax success rates')
-plt.ylabel('Hits success rate')
+plt.title('Fast Relax vs No Fast Relax Success Rates')
+plt.ylabel('Hits Success Rate (%)')
+barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No Fast Relax\n n={positives_noFR+negatives_noFR}'))
 # Show the plot
+plt.ylim((0,0.07))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
 
 plt.figure(figsize=(8,10))
@@ -115,7 +117,7 @@ annotator=Annotator(
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -139,7 +141,7 @@ annotator=Annotator(
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
@@ -173,7 +175,7 @@ annotator=Annotator(
     ]
 )
 annotator.configure(
-    test='t-test_ind',
+    test='Mann-Whitney',
     text_format='star',
     loc='inside',
     comparisons_correction="bonferroni")
