@@ -75,7 +75,7 @@ sns.pointplot(data=df_filtered, x='Noise', y='RMSD', hue= 'Noise', palette='cres
 
 # Plot the regression line
 # sns.lineplot(x=X, y=y_pred, label=f'$r$={r_value:.2f}', color='red', ax=ax) ##Doesn't work##
-plt.title('RMSD vs Noise Steps', fontsize=26)
+plt.title('Noise Steps vs RMSD', fontsize=26)
 plt.xlabel('Noise Steps (#)', fontsize=22)
 plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
 plt.tick_params(axis='y', labelsize=20)
