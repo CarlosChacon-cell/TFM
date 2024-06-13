@@ -43,7 +43,7 @@ with open(file_path, 'r') as json_file:
 # Now you can work with the 'data' dictionary containing your JSON content
 
 pae=data['predicted_aligned_error']
-# plddt=data['plddt']
+plddt=data['plddt']
 residues=[]
 mean=[]
 residuefilename='close_residues.csv'
@@ -83,13 +83,15 @@ else:
     for residue_target in target_residues:
         lists=pae[residue_target]
         for binder_residue in binder_residues:
-            mean.append(lists[binder_residue])
+            mean.append(lists[binder_residue]/(plddt[residue_target]/100))
     for residue_binder in binder_residues:
         lists=pae[residue_binder]
         for residue_target in target_residues:
-            mean.append(lists[residue_target])
+            mean.append(lists[residue_target]/(plddt[residue_binder]/100))
 
     pae_interaction_local=np.mean(mean)
+    if pae_interaction_local > 30.0:
+        pae_interaction_local=30.0
 
     pae1=pae[binderlen:]
 

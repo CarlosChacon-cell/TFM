@@ -23,7 +23,7 @@ def extract_chain_sequence(input_file, chain_id):
                 sequences[chain] = record.seq
     return sequences
 
-pattern = r'run_\d+_design_\d+'
+pattern = r'run_\d+_design_\d+.*_dldesign_(\d+).pdb'
 PDBFile = args.input
 PDB_out = 'noremarks.pdb'
 

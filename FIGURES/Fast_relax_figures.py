@@ -65,8 +65,8 @@ negatives_FR = len(df_FR) - positives_FR
 positives_noFR=len(df_noFR[(df_noFR['plddt_binder'] > 80) & (df_noFR['pae_interaction'] < 10)])
 negatives_noFR = len(df_noFR) - positives_noFR
 
-percentage_FR=positives_FR/(positives_FR+negatives_FR)
-percentage_noFR=positives_noFR/(positives_noFR+negatives_noFR)
+percentage_FR=positives_FR/(positives_FR+negatives_FR) *100
+percentage_noFR=positives_noFR/(positives_noFR+negatives_noFR) *100
 # Prepare data for plotting
 data = {'Campaign': ['Fast Relax', 'No Fast Relax'], 'Percentage': [percentage_FR, percentage_noFR]}
 
@@ -103,12 +103,14 @@ barplot.set_xticklabels((f'Fast Relax\n n={positives_FR + negatives_FR}', f'No F
 # Show the plot
 plt.tick_params(axis='y', labelsize=20)
 
-plt.ylim((0,0.07))
+plt.ylim((0,7))
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/FastRelaxvsNoFRSuccessRates.png')
 
 plt.figure(figsize=(10,12))
+hits_FR=len(df_filtered[df_filtered['campaign']=='campaign_run_112_FR'])
+hits_noFR=len(df_filtered[df_filtered['campaign']=='campaign_run_112_noFR'])
 violinplot=sns.violinplot(data=df_filtered, x='campaign', y='pae_interaction', palette='crest')
-violinplot.set_xticklabels(['Fast Relax', 'No Fast Relax'])
+violinplot.set_xticklabels((f'Fast Relax\n n={hits_FR}', f'No Fast Relax\n n={hits_noFR}'), fontsize=20)
 annotator=Annotator(
     violinplot,
     data=df_filtered,
@@ -122,20 +124,22 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()
 plt.title('PAE vs Fast Relax', fontsize=26)
 plt.ylabel(f'PAE interaction ($\AA$)', fontsize=22)
 plt.xlabel('Fast Relax Protocol', fontsize=22)
+
 plt.tick_params(axis='y', labelsize=20)
 plt.tick_params(axis='x', labelsize=20)
+
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_FR.png')
 
 plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered, x='campaign', y='plddt_binder', palette='crest')
-violinplot.set_xticklabels(['Fast Relax','No Fast Relax'])
+violinplot.set_xticklabels((f'Fast Relax\n n={hits_FR}', f'No Fast Relax\n n={hits_noFR}'), fontsize=20)
 annotator=Annotator(
     violinplot,
     data=df_filtered,
@@ -149,10 +153,11 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()
+
 plt.title('pLDDT vs _Fast Relax', fontsize=26)
 plt.ylabel(f'pLDDT binder', fontsize=22)
 plt.xlabel('Fast Relax Protocol', fontsize=22)
@@ -171,7 +176,7 @@ df_rmsd_nofr['FR']='No Fast Relax'
 df_rmsd=pd.concat([df_rmsd_fr, df_rmsd_nofr])
 plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_rmsd, x='FR', y='Global RMSD', palette='crest')
-violinplot.set_xticklabels(['Fast Relax', 'No Fast Relax'])
+violinplot.set_xticklabels((f'Fast Relax\n n={hits_FR}', f'No Fast Relax\n n={hits_noFR}'), fontsize=20)
 
 annotator=Annotator(
     violinplot,
@@ -186,7 +191,7 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()

@@ -17,6 +17,8 @@ df_filtered_112.loc[df_filtered_112['Noise'] == '01', 'Noise'] = 0.1
 df_filtered_112.loc[df_filtered_112['Noise'] == '05', 'Noise'] = 0.5
 df_filtered_112.loc[df_filtered_112['Noise'] == '1', 'Noise'] = 1.0
 
+
+
 df_barplot=pd.DataFrame()
 df_barplot['Noise']=df_filtered_112['Noise'].unique()
 percentage=[]
@@ -27,7 +29,7 @@ for noise in df_filtered_112['Noise'].unique():
                         (df_filtered_112['pae_interaction'] < 10) & 
                         (df_filtered_112['plddt_binder'] > 80)]
     # Calculate the percentage
-    percent = len(filtered) / len(df_filtered_112[df_filtered_112['Noise'] == noise])
+    percent = len(filtered) / len(df_filtered_112[df_filtered_112['Noise'] == noise]) * 100
     
     # Append the result to the percentage list
     percentage.append(percent)
@@ -47,7 +49,7 @@ barplot.set_xticklabels((f'0.05\n n={len( df_filtered_112[df_filtered_112["Noise
                          f'1\n n={len(df_filtered_112[df_filtered_112["Noise"]==1])}'), fontsize=20)
 
 # Show the plot
-plt.ylim((0,0.07))
+plt.ylim((0,7))
 plt.tick_params(axis='y', labelsize=20)
 
 plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/barplot_noisescale.png')
@@ -85,8 +87,14 @@ slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(X, y)
 
 print(' PEARSON CORRELATION COEFFICIENT VALUE:', r_value)
 
+hits_005=len(df_filtered_112[df_filtered_112['Noise']==0.05 ])
+hits_01=len(df_filtered_112[df_filtered_112['Noise']==0.1])
+hits_05=len(df_filtered_112[df_filtered_112['Noise']==0.5])
+hits_1=len(df_filtered_112[df_filtered_112['Noise']==1])
+
 plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_filtered_112, x='Noise', y='RMSD', palette='crest')
+violinplot.set_xticklabels((f'0.05\n n={hits_005}', f'0.1\n n={hits_01}', f'0.5\n n={hits_05}',f'1\n n={hits_1}'), fontsize=20)
 annotator=Annotator(
     violinplot,
     data=df_filtered_112,
@@ -102,7 +110,7 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()
@@ -119,6 +127,7 @@ df_hits=df_filtered_112[(df_filtered_112['pae_interaction'] < 10) & (df_filtered
 #A violinplot in case it is interesting 
 plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_hits, x='Noise', y='pae_interaction', palette='crest')
+violinplot.set_xticklabels((f'0.05\n n={hits_005}', f'0.1\n n={hits_01}', f'0.5\n n={hits_05}',f'1\n n={hits_1}'), fontsize=20)
 annotator=Annotator(
     violinplot,
     data=df_hits,
@@ -134,7 +143,7 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()
@@ -148,6 +157,7 @@ plt.savefig('/home/cchacon/Carlos_scripts/FIGURES/violinplot_pae_interaction_noi
 
 plt.figure(figsize=(10,12))
 violinplot=sns.violinplot(data=df_hits, x='Noise', y='plddt_binder', palette='crest')
+violinplot.set_xticklabels((f'0.05\n n={hits_005}', f'0.1\n n={hits_01}', f'0.5\n n={hits_05}',f'1\n n={hits_1}'), fontsize=20)
 annotator=Annotator(
     violinplot,
     data=df_hits,
@@ -163,7 +173,7 @@ annotator.configure(
     test='Mann-Whitney',
     text_format='star',
     loc='inside',
-    comparisons_correction="bonferroni",
+    comparisons_correction="holm-bonferroni",
     fontsize=18)
     
 annotator.apply_and_annotate()
@@ -258,26 +268,26 @@ sns.set(style="whitegrid")
 
 # Create a scatter plot
 plt.figure(figsize=(10, 8))
-sns.scatterplot(data=df_filtered_264, x='pae_interaction', y='plddt_binder', hue='Noise', s=100, palette='crest')
+sns.scatterplot(data=df_filtered_264, x='pae_interaction', y='plddt_binder', hue='Noise', s=100, palette='Set2')
 sns.scatterplot(data=df_original, x='pae_interaction', y='plddt_binder', color='red', s=100, edgecolors='k', label='Original')
 
 # Add titles and labels
 plt.title('PAE Interaction vs. pLDDT Binder Run_264', fontsize=26)
-plt.xlabel('PAE Interaction', fontsize=22)
-plt.ylabel('pLDDT Binder', fontsize=22)
+plt.xlabel(f'PAE Interaction ($\AA$)', fontsize=22)
+plt.ylabel(f'pLDDT Binder (Arb.Units)', fontsize=22)
 plt.tick_params(axis='y', labelsize=20)
 plt.tick_params(axis='x', labelsize=20)
 
 # Highlight specific region with a square
 rect = patches.Rectangle((0, 80), 10, 20, linewidth=2, edgecolor='black', facecolor='none')
 plt.gca().add_patch(rect)
-plt.text(4, 81, 'Hits Zone', color='black', fontsize=12)
+plt.text(6, 81, 'Hits Zone', color='black', fontsize=20)
 # Invert the x-axis
 plt.gca().invert_xaxis()
 
 # Add legend
-plt.legend()
-
+plt.legend(title='Noise Scale', title_fontsize=18, fontsize=16)
+plt.ylim((30,100))
 # Add grid
 plt.grid(True)
 

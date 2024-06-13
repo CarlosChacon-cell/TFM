@@ -19,7 +19,7 @@ observed = [[positives_FR, total_FR - positives_FR], [positives_no_FR, total_no_
 chi2, p, _, _ = chi2_contingency(observed)
 
 print("Chi-square statistic:", chi2)
-print("P-value:", p*6)
+print("P-value:", p)
 
 
 # Data
