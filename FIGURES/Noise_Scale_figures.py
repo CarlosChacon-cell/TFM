@@ -114,9 +114,9 @@ annotator.configure(
     fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('RMSD vs Noise Scale', fontsize=26)
+plt.title('Noise Scale vs RMSD', fontsize=26)
 plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
-plt.xlabel('Noise Scale (Arb.U)', fontsize=22)
+plt.xlabel('Noise Scale (Arb.Units)', fontsize=22)
 plt.tick_params(axis='y', labelsize=20)
 plt.tick_params(axis='x', labelsize=20)
 
