@@ -80,15 +80,15 @@ sns.set(style="whitegrid")
 plt.figure(figsize=(10,12))
 barplot = sns.barplot(x='Campaign', y='Percentage', data=df_plot, palette='crest')
 
-# Add significance bracket with an asterisk
-x1, x2 = 0, 1   # x-coordinates of the bars
-y, h, col = max(df_plot['Percentage']) + 0.01, 0.02, 'k'  # y-coordinate, height of the bracket, color
-plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1.5, c=col)
-plt.text((x1+x2)*.5, y+h, "*", ha='center', va='bottom', color=col)
-# Add a box with the p-value in the upper left corner
-p_value = 0.048  # Replace with the actual p-value when available
-textstr = f'p-value = {p_value}'
-props = dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white')
+# # Add significance bracket with an asterisk
+# x1, x2 = 0, 1   # x-coordinates of the bars
+# y, h, col = max(df_plot['Percentage']) + 0.01, 0.02, 'k'  # y-coordinate, height of the bracket, color
+# plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1.5, c=col)
+# plt.text((x1+x2)*.5, y+h, "*", ha='center', va='bottom', color=col)
+# # Add a box with the p-value in the upper left corner
+# p_value = 0.048  # Replace with the actual p-value when available
+# textstr = f'p-value = {p_value}'
+# props = dict(boxstyle='round,pad=0.3', edgecolor='black', facecolor='white')
 
 # Place the box in the upper left corner
 # plt.gca().text(0.02, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
@@ -128,7 +128,7 @@ annotator.configure(
     fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('PAE vs Fast Relax', fontsize=26)
+plt.title('Fast Relax vs PAE interaction', fontsize=26)
 plt.ylabel(f'PAE interaction ($\AA$)', fontsize=22)
 plt.xlabel('Fast Relax Protocol', fontsize=22)
 
@@ -158,8 +158,8 @@ annotator.configure(
     
 annotator.apply_and_annotate()
 
-plt.title('pLDDT vs _Fast Relax', fontsize=26)
-plt.ylabel(f'pLDDT binder', fontsize=22)
+plt.title('Fast Relax vs pLDDT binder', fontsize=26)
+plt.ylabel(f'pLDDT binder (Arb.Units)', fontsize=22)
 plt.xlabel('Fast Relax Protocol', fontsize=22)
 plt.tick_params(axis='y', labelsize=20)
 plt.tick_params(axis='x', labelsize=20)
@@ -195,7 +195,7 @@ annotator.configure(
     fontsize=18)
     
 annotator.apply_and_annotate()
-plt.title('RMSD vs _Fast Relax', fontsize=26)
+plt.title('Fast Relax vs RMSD', fontsize=26)
 plt.ylabel(f'RMSD ($\AA$)', fontsize=22)
 plt.xlabel('Fast Relax Protocol', fontsize=22)
 plt.tick_params(axis='y', labelsize=20)
