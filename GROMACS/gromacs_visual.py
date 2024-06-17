@@ -20,7 +20,6 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 import numpy as np
-from remove_lines import remove_lines_starting_with
 
 #Function definition
 def prettify_plot(ax):
@@ -41,8 +40,6 @@ parser.add_argument('--mode', help='mode of the xvg ', required=True)
 parser.add_argument('--folder', help='folder to save the images', required=False, default='plots')
 args = parser.parse_args()
 
-remove_lines_starting_with(args.file)
-
 file = args.file
 output_folder = args.folder  # Specify the folder to save the plots
 
@@ -50,7 +47,7 @@ output_folder = args.folder  # Specify the folder to save the plots
 os.makedirs(output_folder, exist_ok=True)
 
 if args.mode == 'G':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'Gyrate', 'x', 'y', 'z'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ps)', 'Gyrate', 'x', 'y', 'z'])
     ax=df.plot(x='time(ps)', y='Gyrate', color='blue')
     prettify_plot(ax)
     plt.savefig(os.path.join(output_folder, f'gyrate_plot_{args.i}.png'))  # Save plot as an image
@@ -58,7 +55,7 @@ if args.mode == 'G':
 
 # RMSD
 if args.mode == 'R':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ns)', 'RMSD'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ns)', 'RMSD'])
     ax=df.plot(x='time(ps)', y='RMSD')
     prettify_plot(ax)
     plt.savefig(os.path.join(output_folder, 'RMSD_plot.png'))  # Save plot as an image
@@ -66,7 +63,7 @@ if args.mode == 'R':
 
 # Potential
 if args.mode == 'E':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'Potential'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ps)', 'Potential'])
     ax=df.plot(x='time(ps)', y='Potential')
     prettify_plot(ax)
     plt.savefig(os.path.join(output_folder, 'potential_plot.png'))  # Save plot as an image
@@ -74,7 +71,7 @@ if args.mode == 'E':
 
 # Pressure
 if args.mode == 'P':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'Pressure'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ps)', 'Pressure'])
     ax=df.plot(x='time(ps)', y='Pressure')
     mean=df['Pressure'].mean()
     print('The mean pressure is: ', mean)
@@ -85,7 +82,7 @@ if args.mode == 'P':
 
 # Density
 if args.mode == 'D':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'Density'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ps)', 'Density'])
     ax=df.plot(x='time(ps)', y='Density')
     mean=df['Density'].mean()
     print('The mean Density is: ', mean)
@@ -95,7 +92,7 @@ if args.mode == 'D':
     plt.close()
 #Temperature
 if args.mode == 'T':
-    df = pd.read_csv(file, sep='\s+', header=None, names=['time(ps)', 'Temperature'])
+    df = pd.read_csv(file, skiprows=11, sep='\s+', header=None, names=['time(ps)', 'Temperature'])
     mean=df['Temperature'].mean()
     print('The mean temperature is: ', mean)
     ax=df.plot(x='time(ps)', y='Temperature')

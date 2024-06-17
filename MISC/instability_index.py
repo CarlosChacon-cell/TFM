@@ -1,4 +1,7 @@
-
+'''
+Code to compute both th einstability index and the hydrophobic moment of peptides
+It returns a csv with the protein name, the instability index score and the hydrophobic moment
+'''
 #THis in reality is the instability index
 import peptides as pep
 import numpy as np

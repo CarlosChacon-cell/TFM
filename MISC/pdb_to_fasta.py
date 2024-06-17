@@ -1,3 +1,14 @@
+'''
+Code to get the fasta of one of the chains of a PDB file.
+--> Input:
+    --input: PDB file
+    --chain: Chain to extract
+--> Output:
+    example.fasta : A fasta file with the sequence of the chain extracted
+
+'''
+
+
 import sys
 from Bio import SeqIO
 import re

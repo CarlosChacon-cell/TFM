@@ -8,6 +8,7 @@ from timeit import default_timer as timer
 import argparse
 import glob
 import uuid
+import json #new line
 
 import jax
 import jax.numpy as jnp
@@ -48,6 +49,7 @@ parser.add_argument( "-outsilent", type=str, default="out.silent", help='The nam
 parser.add_argument( "-runlist", type=str, default='', help="The path of a list of pdb tags to run. Only used when -pdbdir is active (default: ''; Run all PDBs)" )
 parser.add_argument( "-checkpoint_name", type=str, default='check.point', help="The name of a file where tags which have finished will be written (default: check.point)" )
 parser.add_argument( "-scorefilename", type=str, default='out.sc', help="The name of a file where scores will be written (default: out.sc)" )
+parser.add_argument("-jsonfilename", type=str, default='pae', help='The name of a json file with all the values for pae (default pae)' ) ##NEW##
 parser.add_argument( "-maintain_res_numbering", action="store_true", default=False, help='When active, the model will not renumber the residues when bad inputs are encountered (default: False)' )
 
 parser.add_argument( "-debug", action="store_true", default=False, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
@@ -164,17 +166,13 @@ class AF2_runner():
 
         return feature_dict, initial_guess 
 
-    def generate_scoredict(self, feat_holder, confidences) -> None:
+    def generate_scoredict(self, feat_holder, confidences,tag) -> None:
         '''
         Collect the confidence values, slicing them to the binder and target regions
         then add the parsed scores to the score_dict
         '''
 
         binderlen = feat_holder.binderlen
-        
-        print('#########################\n########################\n')
-        print(binderlen)
-        print('\n#########################\n########################\n')
 
         plddt_array = confidences['plddt']
         plddt = np.mean( plddt_array )
@@ -217,12 +215,43 @@ class AF2_runner():
         # If we ever want to write strings to the score file we can do it here
         string_dict = None
 
-        self.struct_manager.record_scores(feat_holder.outtag, score_dict, string_dict)
+        self.struct_manager.record_scores(feat_holder.outtag, score_dict, string_dict,pae, plddt_array)
 
-        print(score_dict)
+        # filename = f'pae.txt'
+        
+        # with open('trial.txt', 'w'):
+        #     file.write(pae)
+        
+        # with open(filename, 'w') as file:
+        #     if pae is not None:
+        #         for element in pae[:binderlen,binderlen:]:
+        #             file.write(f'predicted_aligned_error: {element}\n')
+
+                    #ALL OF THIS IS NEW AND PROBABLY 
+
+
+        """Check prediction result for PAE data and save to a JSON file if present.
+
+        Args:
+            pae: The n_res x n_res PAE array.
+            max_pae: The maximum possible PAE value.
+            output_dir: Directory to which files are saved.
+            model_name: Name of a model.
+        """
+
+
+
+
+        '''
+        When running this command, we obtain a txt file with a number of lists= len(binder)
+        And each list have a length = len(target) 
+        This could be either 
+        '''
+                     
+        #
         print(f"Tag: {feat_holder.outtag} reported success in {time} seconds")
 
-    def process_output(self, feat_holder, feature_dict, prediction_result) -> None:
+    def process_output(self, feat_holder, feature_dict, prediction_result,tag) -> None:
         '''
         Take the AF2 output, parse the confidence scores from this and register the scores in the score file
         Also write out the structure
@@ -259,14 +288,11 @@ class AF2_runner():
         os.remove(self.struct_manager.tmp_fn)
         
         # Now we can finally write the scores and the predicted structure to disk
-        self.generate_scoredict(feat_holder, confidences)
+        self.generate_scoredict(feat_holder, confidences,tag)
         self.struct_manager.dump_pose(feat_holder)
-
-
-        filename = f'{feat_holder.outtag}_confidences.txt'
-        with open(filename, 'w') as file:
-            for key, value in confidences.items():
-                file.write(f'{key}: {value}\n')
+        
+        
+        
     
     def process_struct(self, tag) -> None:
 
@@ -296,7 +322,7 @@ class AF2_runner():
         print(f'Tag: {feat_holder.tag} finished AF2 prediction in {timer() - start} seconds')
 
         # Process outputs
-        self.process_output(feat_holder, feature_dict, prediction_result)
+        self.process_output(feat_holder, feature_dict, prediction_result,tag)
 
 
 class StructManager():
@@ -313,6 +339,8 @@ class StructManager():
         self.maintain_res_numbering = args.maintain_res_numbering
 
         self.score_fn = args.scorefilename
+
+        self.json_fn = args.jsonfilename ##NEW##
 
         # Generate a random unique temporary filename
         self.tmp_fn = f'tmp_{uuid.uuid4()}.pdb'
@@ -408,7 +436,7 @@ class StructManager():
 
             yield struct
 
-    def record_scores(self, tag, score_dict, string_dict):
+    def record_scores(self, tag, score_dict, string_dict ,pae, plddt):
         '''
         Record the scores for this structure to the score file.
 
@@ -423,7 +451,35 @@ class StructManager():
         if not os.path.isfile(self.score_fn):
             write_header = True
 
-        af2_util.add2scorefile(tag, self.score_fn, write_header, score_dict, string_dict) 
+        af2_util.add2scorefile(tag, self.score_fn, write_header, score_dict, string_dict)
+ 
+        #JSON output
+        model_name=tag
+        max_pae=float(30) #al azar de momento TO FIX
+
+        if pae.ndim != 2 or pae.shape[0] != pae.shape[1]:
+            raise ValueError(f'PAE must be a square matrix, got {pae.shape}')
+        rounded_errors = np.round(pae.astype(np.float64), decimals=6)
+        formatted_output = {
+        'predicted_aligned_error': rounded_errors.tolist(),
+        'max_predicted_aligned_error': max_pae,
+        'plddt':plddt.tolist()
+        }
+
+
+        pae_json=json.dumps(formatted_output, indent=None, separators=(',', ':'))
+
+        # Save the PAE json.
+        json_file_name=f'{self.json_fn}_{model_name}.json' ##NEW##
+
+
+
+        #pae_json_output_path = f'pae_{model_name}.json'
+
+        with open(json_file_name, 'w') as f:
+            f.write(pae_json)
+
+
 
     def dump_pose(self, feat_holder):
         '''
