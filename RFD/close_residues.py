@@ -1,3 +1,17 @@
+'''
+This code computes which residues are in the interacting interface (Distance between proteins < 4 A)
+--> Input:
+    --protein: protein file path, in pdb format
+-->Output:
+    close_residues.csv: CSV file with the protein name, its length, the interacting surface in %, the interacting residues of the binder
+                        and the interacting residues of the target 
+
+This code must be run inside pymol. Example:
+
+pymol -c /path/to/close_residues.py --protein example.pdb
+
+'''
+
 import argparse
 import os
 import pymol

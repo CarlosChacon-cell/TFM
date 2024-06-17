@@ -1,3 +1,16 @@
+'''
+Code to get the contigs in partial diffusion format:
+--> Input:
+    --file: PDB file to which we want to perform Partial Diffusion. The binder must be in the chain A, and the nummeration should be continuous between binder and target
+--> Output:
+    Prints the contigs we have to introduce to the PD command. Example:
+    
+    python3 /path/to/contigs_getter_pd.py --file example.pdb  --> [ LENGTH_BINDER-LENGTH_BINDER\0 FIRST_RESIDUE_TARGET-LAST_RESIDUE_TARGET ] 
+
+
+
+'''
+
 import argparse
 
 parser = argparse.ArgumentParser()
