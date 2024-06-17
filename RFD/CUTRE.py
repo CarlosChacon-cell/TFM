@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+'''
+Code to compute the CUTRE score.
+--> Input:
+    --protein: PDB file of the protein whose CUTRE we want to compute
+--> Ouput:
+    CUTRE.csv: A CSV file detailing the CUTRE score, the PAE_interaction, the protein name, its length and the interacting surface of the complex in % 
+
+WARNING! close_residues.csv must be in the directory from which CUTRE.py is being ran
+
+'''
+
+
+
+
+
 
 import numpy as np
 import json
@@ -74,7 +89,7 @@ if type(residues)==float:
         pae2_filtered.append(lista[binderlen:])
 
     pae_interaction_global=(np.mean(pae1_filtered)+np.mean(pae2_filtered))
-    pae_interaction_local=pae_interaction_global
+    CUTRE=pae_interaction_global
 else:
     binder_residues=[int(number)-1 for number in binder_residues]
     target_residues=[int(number)-1 for number in target_residues]
@@ -89,9 +104,9 @@ else:
         for residue_target in target_residues:
             mean.append(lists[residue_target]/(plddt[residue_binder]/100))
 
-    pae_interaction_local=np.mean(mean)
-    if pae_interaction_local > 30.0:
-        pae_interaction_local=30.0
+    CUTRE=np.mean(mean)
+    if CUTRE > 30.0:
+        CUTRE=30.0
 
     pae1=pae[binderlen:]
 
@@ -110,7 +125,7 @@ else:
 
 
 df=pd.DataFrame({
-'pae_interaction_local':[pae_interaction_local], 
+'CUTRE':[CUTRE], 
 'pae_interaction_global':[pae_interaction_global],
 'protein_name':[args.protein.split('.')[0]],
 'length': [binderlen],
@@ -118,7 +133,7 @@ df=pd.DataFrame({
 })
 
 
-file_path='pae_local_global.csv'
+file_path='CUTRE.csv'
 # Load existing CSV file into DataFrame
 try:
     existing_data = pd.read_csv('pae_local_global.csv')

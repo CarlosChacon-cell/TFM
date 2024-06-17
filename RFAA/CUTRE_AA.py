@@ -1,3 +1,15 @@
+'''
+Code to perform the CUTRE scoring of the RFAA output.
+-->Input:
+    --folder: Folder in which the prediction whose CUTRE we want to know is stored
+-->Output:
+    LigandSearchMetrics.csv: A CSV file detailing the compound name, the mean pLDDT of the prediction, the PAE_interaction and the CUTRE score
+
+WARNING! The close_residues.csv file must be in the same directory from which this code is being ran
+WARNING! Obviously, you have to run this code after you have performed a RFAA prediction
+'''
+
+
 import argparse
 import pandas as pd
 from Scoring import extract_scoring, extract_features
@@ -28,7 +40,7 @@ if __name__ == '__main__':
         'Comp_name':args.folder,
         'mean_plddt': [round(mean_plddt,3)],
         'pae_interaction': [round(pae_interaction,3)],
-        'pae_interaction_local':[round(cutre_local,3)]
+        'CUTRE':[round(cutre_local,3)]
     }
     score_df=pd.DataFrame(score_dict)
     try:

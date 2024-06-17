@@ -1,4 +1,6 @@
-
+'''
+Code that provides the needed function for the CUTRE_AA.py to work
+'''
 import torch 
 import argparse
 import pandas as pd 

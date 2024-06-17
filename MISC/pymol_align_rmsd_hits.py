@@ -13,9 +13,7 @@ Output:
 
 --rmsd.csv: A csv file with the RMSD, the query and the original name and the chain we are using to compute the RMSD (in our case always A so it is hardcoded)
 
-
-
-
+WARNING! This code must be run inside PyMol: pymol -c /path/to/pymol_align_rmsd_hits.py --input example.pdb --og original.pdb --chain A
 '''
 
 

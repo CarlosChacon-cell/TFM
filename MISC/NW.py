@@ -1,5 +1,5 @@
 ''''
-This a code used for pairwise alignment between two protein sequences using the BlLOSUM62 matrix 
+This code is used for pairwise alignment between two protein sequences using the BLOSUM62 matrix 
 and a gap penalty of -10, as well as an extension penalty of -0.5.
 
 Inputs:

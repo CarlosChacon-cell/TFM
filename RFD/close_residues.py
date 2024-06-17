@@ -9,7 +9,6 @@ This code computes which residues are in the interacting interface (Distance bet
 This code must be run inside pymol. Example:
 
 pymol -c /path/to/close_residues.py --protein example.pdb
-
 '''
 
 import argparse

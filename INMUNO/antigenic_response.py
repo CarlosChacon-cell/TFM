@@ -1,12 +1,3 @@
-
-
-
-import pandas as pd 
-import numpy as np
-import matplotlib.pyplot as plt
-import glob
-import argparse
-
 '''
 Based on this strange paper https://febs.onlinelibrary.wiley.com/doi/epdf/10.1016/0014-5793%2890%2980535-Q
 They get an aminoacid surface propensity and an aminoacid antigen propensity
@@ -19,9 +10,17 @@ Then, they compute the <Aprotein>. If it is larger than
 If it is smaller than 1, any 7mer residues above the avg
 are antigenic
 
-
-
+This is only valid to compute the probability of a linear epitope for B-cells, so its usefulness is very limited
 '''
+
+
+
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt
+import glob
+import argparse
+
 
 
 

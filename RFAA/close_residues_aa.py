@@ -1,3 +1,16 @@
+'''
+This code computes which residues are in the interacting interface (Distance between proteins < 4 A) between ligand and protein.
+--> Input:
+    --protein: protein file path, in pdb format
+    --length: Length of the protein target. This is needed since the pdb output from RFAA numbers each atom from the small molecule as a residue
+               of the target.
+-->Output:
+    close_residues.csv: CSV file with the protein name, its length, the interacting surface in %, the interacting residues of the target 
+'''
+
+
+
+
 import argparse
 import os
 import pymol
